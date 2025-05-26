@@ -3,9 +3,9 @@ from datetime import datetime as dt
 from db import db
 
 
-class Car(db.Model):
+class Student(db.Model):
     id = Column(Integer, primary_key=True)
-    make = Column(String(64), nullable=False)
+    first_name = Column(String(64), nullable=False)
     model = Column(String(64), nullable=False)
     year = Column(Integer)
     color = Column(String(32))
