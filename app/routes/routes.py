@@ -97,3 +97,7 @@ def register_routes(app):
         db.session.delete(car)
         db.session.commit()
         return redirect(url_for('car_list'))
+    
+    @app.route('/')
+    def main():
+        return render_template('main.html')
