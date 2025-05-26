@@ -1,0 +1,10 @@
+{% extends 'base.html' %} {% block content %}
+<div class="hero">
+  <h1>University</h1>
+  <p>Modern platform for students, lecturers, and administration</p>
+  <div class="btn-container">
+    <a href="{{ url_for('auth.login') }}">Login</a>
+    <a href="{{ url_for('auth.register') }}">Register</a>
+  </div>
+</div>
+{% endblock %}
