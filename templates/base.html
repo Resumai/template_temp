@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="lt">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,8 +10,26 @@
     />
   </head>
   <body>
-    {% block content %} {% endblock %}
+    <header>
+      <nav>
+        <ul>
+          {% if current_user.is_authenticated %}
+          <li><a href="{{ url_for('car_list') }}">My Cars</a></li>
+          <li><a href="{{ url_for('add_car') }}">Add Car</a></li>
+          <li><a href="{{ url_for('logout') }}">Logout</a></li>
+          {% else %}
+          <li><a href="{{ url_for('login') }}">Login</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
 
-    <footer>&copy; {{ current_year }} University. All rights reserved.</footer>
+    <main>{% block content %} {% endblock %}</main>
+
+    <footer>
+      &copy; {{ current_year or '2025' }} University. All rights reserved.
+      <a href="#">Privacy Policy</a> |
+      <a href="#">Terms of Service</a>
+    </footer>
   </body>
 </html>

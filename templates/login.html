@@ -1,14 +1,14 @@
 {% extends 'base.html' %} {% block title %} Login Page {% endblock %} {% block
 content %}
-<div class="container">
-  <h2>Login</h2>
+<div class="container" style="max-width: 500px">
+  <h2 class="mb-4">Login</h2>
   <form method="POST" action="{{ url_for('login') }}">
     {{ form.hidden_tag() }}
 
-    <div class="form-group">
+    <div class="form-group mb-3">
       <label for="email">Email Address</label>
-      {{ form.email(class="form-control", placeholder="Enter your email
-      address") }} {% if form.email.errors %}
+      {{ form.email(class="form-control", placeholder="Enter your email") }} {%
+      if form.email.errors %}
       <div class="text-danger">
         {% for error in form.email.errors %}
         <p>{{ error }}</p>
@@ -17,7 +17,7 @@ content %}
       {% endif %}
     </div>
 
-    <div class="form-group">
+    <div class="form-group mb-3">
       <label for="password">Password</label>
       {{ form.password(class="form-control", placeholder="Enter your password")
       }} {% if form.password.errors %}
@@ -29,12 +29,9 @@ content %}
       {% endif %}
     </div>
 
-    <div class="form-check">
-      {{ form.remember_me() }}
-      <label class="form-check-label" for="remember_me">Remember Me</label>
+    <div class="form-group">
+      {{ form.submit(class="btn btn-primary w-100") }}
     </div>
-
-    <div class="form-group">{{ form.submit(class="btn btn-primary") }}</div>
   </form>
 </div>
 {% endblock %}
