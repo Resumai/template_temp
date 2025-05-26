@@ -44,5 +44,27 @@ def other_func(var):
 # def my_func():
 #     return "Dude"
 
-
 other_func("Dude")
+
+# from sqlalchemy import Column, Integer,  String, select, update, delete, DateTime, ForeignKey
+
+
+# class TextTest:
+#     text = "test@example.com"
+
+#     def __eq__(self, other):
+#         return self.text == other
+
+# test = TextTest()
+
+class User:
+    email = "test@example.com"
+
+    def __eq__(self, other):
+        return self.email == other
+
+def select_where(*args):
+    for expression in args:
+        print("Received:", expression)
+
+select_where(User.email == "test@example.com")

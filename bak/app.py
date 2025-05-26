@@ -12,10 +12,10 @@ from datetime import datetime as dt
 # For easier type checking
 from sqlalchemy import Column, Integer,  String, select, update, delete, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from typing import TYPE_CHECKING, cast
-if TYPE_CHECKING:
-    from sqlalchemy.orm import InstrumentedAttribute, DeclarativeMeta
-    from sqlalchemy import BinaryExpression
+# from typing import TYPE_CHECKING
+# # if TYPE_CHECKING:
+# from sqlalchemy.orm import InstrumentedAttribute, DeclarativeMeta
+# from sqlalchemy import BinaryExpression
 
 
 
@@ -29,9 +29,6 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 ### MODELS ###
-
-from sqlalchemy import select
-
 class SelectWrapper:
     def __init__(self, model_class, *expressions):
         self.model_class = model_class
@@ -51,10 +48,6 @@ class SelectWrapper:
 
     def count(self):
         return len(self.all())  # Simplified for now
-
-
-
-
 
 
 
@@ -91,27 +84,11 @@ class CarForm(FlaskForm):
     submit = SubmitField('Save')
 
 
+def select_where(column , value):
+    model = column.class_
+    statement = select(model).where(column == value)
+    return db.session.execute(statement).scalar_one_or_none()
 
-
-# def find_by_column(column : InstrumentedAttribute, value):
-#     model = column.class_
-#     statement = select(model).where(column == value)
-#     return db.session.execute(statement).scalar_one_or_none()
-    
-
-
-def select_where(*expressions : BinaryExpression):
-    left_side : InstrumentedAttribute = expressions[0].left # left side of the expression
-    model_class : DeclarativeMeta = left_side.class_ # means, model_class is classes that use db.Model
-    return SelectWrapper(model_class, *expressions)
-
-# user = select_where(User.email == "test@example.com").one_or_none()
-# print(user)
-
-
-# def update_where(model, values: dict, *expressions: BinaryExpression) -> ExecuteWrapper:
-#     statement = update(model).where(*expressions).values(**values)
-#     return ExecuteWrapper(statement)
 
 # def delete_where(expression: BinaryExpression):
 #     value = expression.right
@@ -127,32 +104,31 @@ def select_where(*expressions : BinaryExpression):
 #         db.session.commit()
 
 
+def select_where(*expressions):
+    left_side = expressions[0].left # left side of the expression
+    model = left_side.class_ # means, model_class is classes that use db.Model
+    return SelectWrapper(model, *expressions)
 
-def delete_where(*expressions: BinaryExpression):
-    model: DeclarativeMeta = expressions[0].left.class_
-    statement = select(model).where(*expressions)
-    results = db.session.execute(statement).scalars().all()
-
-    for obj in results:
-        db.session.delete(obj)
-
-    db.session.commit()
+# user = select_where(User.email == "test@example.com").one_or_none()
+# print(user)
 
 
+# def delete_where(*expressions: BinaryExpression):
+#     model = expressions[0].left.class_
+#     statement = select(model).where(*expressions)
+#     results = db.session.execute(statement).scalars().all()
 
-delete_where(User.id == 1)
+#     for obj in results:
+#         db.session.delete(obj)
 
-# user = find_by_column(User.email == 'test@example.com')
+#     db.session.commit()
 
-# T = TypeVar('T')
-# def find_by_column(expression : BinaryExpression) -> T | None:
-#     """Find a single object by a column expression."""
-#     left_side : InstrumentedAttribute = expression.left
-#     model_class : DeclarativeMeta = left_side.class_ # means, model_class is classes that use db.Model
-#     statement = select(model_class).where(expression)
-#     result = db.session.execute(statement).scalar_one_or_none()
-#     return cast(T | None, result) # cast() helps type checker understand that result can be T or None
+# delete_where(User.id == 1)
 
+
+# def update_where(model, values: dict, *expressions: BinaryExpression) -> ExecuteWrapper:
+#     statement = update(model).where(*expressions).values(**values)
+#     return ExecuteWrapper(statement)
 
 
 
@@ -167,8 +143,9 @@ def load_user(user_id):
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # user = User.query.filter_by(email=form.email.data).first()
-        user : User | None = find_by_column(User.email == form.email.data)
+        user = User.query.filter_by(email=form.email.data).first()
+        # user : User = select_where(User.email == form.email.data).one_or_none()
+        # user = select_where(User.email, form.email.data)
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user)
             return redirect(url_for('car_list'))
@@ -186,7 +163,7 @@ def logout():
 @login_required
 def car_list():
     # cars = Car.query.filter_by(user_id=current_user.id).all()
-    cars = find_by_column(Car.user_id == current_user.id)
+    # cars = select_where(Car.user_id == current_user.id).all()
     return render_template('car_list.html', cars=cars)
 
 @app.route('/cars/add', methods=['GET', 'POST'])
