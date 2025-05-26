@@ -8,6 +8,6 @@ __pycache__/
 # Logs
 *.log
 
-# Databases
-*.sqlite3
-*.db
+# # Databases
+# *.sqlite3
+# *.db
