@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FloatField, SelectField, TextAreaField, DateField
-from wtforms.validators import DataRequired, Email, NumberRange, Length
 from datetime import datetime
 import os
 
