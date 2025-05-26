@@ -1,0 +1,10 @@
+<h2>Add Car</h2>
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.make.label }} {{ form.make(size=32) }}<br>
+    {{ form.model.label }} {{ form.model(size=32) }}<br>
+    {{ form.year.label }} {{ form.year() }}<br>
+    {{ form.color.label }} {{ form.color(size=32) }}<br>
+    {{ form.vin.label }} {{ form.vin(size=32) }}<br>
+    {{ form.submit() }}
+</form>
