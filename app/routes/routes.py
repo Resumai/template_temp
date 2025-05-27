@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
-from app import db, User, Car, LoginForm, CarForm
+from app import db, User, Car, LoginForm, CarForm, ContactForm, RegistrationForm
 from werkzeug.security import check_password_hash
 from app import select_where
 
