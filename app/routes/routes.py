@@ -1,10 +1,10 @@
 from flask import render_template, redirect, url_for, request
 from flask_login import login_user, login_required, logout_user, current_user
 from app.models.user import User
-from app.models.car import Car
+# from app.models.car import Car
 from db import db
 from app.forms.login_form import LoginForm
-from app.forms.car_form import CarForm
+# from app.forms.car_form import CarForm
 # from app.forms.test_form import TestForm
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -45,8 +45,11 @@ def select_where(*expressions : BinaryExpression):
 
 # app/routes/routes.py
 
-
 def register_routes(app):
+
+    @app.route('/')
+    def home():
+        return "Welcome to the app!"  # or render_template('home.html')
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
@@ -55,7 +58,8 @@ def register_routes(app):
             user = select_where(User.email == form.email.data).one_or_none()
             if user and check_password_hash(user.password_hash, form.password.data):
                 login_user(user)
-                return redirect(url_for('car_list'))
+                # For now, redirect to home or something that exists
+                return redirect(url_for('home'))  
         return render_template('login.html', form=form)
 
     @app.route('/logout')
@@ -63,37 +67,3 @@ def register_routes(app):
     def logout():
         logout_user()
         return redirect(url_for('login'))
-
-    @app.route('/cars')
-    @login_required
-    def car_list():
-        cars = Car.query.filter_by(user_id=current_user.id).all()
-        return render_template('car_list.html', cars=cars)
-
-    @app.route('/cars/add', methods=['GET', 'POST'])
-    @login_required
-    def add_car():
-        form = CarForm()
-        if form.validate_on_submit():
-            car = Car(
-                make=form.make.data,
-                model=form.model.data,
-                year=form.year.data,
-                color=form.color.data,
-                vin=form.vin.data,
-                user_id=current_user.id
-            )
-            db.session.add(car)
-            db.session.commit()
-            return redirect(url_for('car_list'))
-        return render_template('add_car.html', form=form)
-
-    @app.route('/cars/delete/<int:car_id>', methods=['POST'])
-    @login_required
-    def delete_car(car_id):
-        car = Car.query.get_or_404(car_id)
-        if car.user_id != current_user.id:
-            return "Unauthorized", 403
-        db.session.delete(car)
-        db.session.commit()
-        return redirect(url_for('car_list'))

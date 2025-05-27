@@ -36,6 +36,8 @@ register_routes(app)
 #     return render_template('test.html', form=form)
 
 
+
+
 ### LOGIN LOADER ###
 @login_manager.user_loader
 def load_user(user_id):
