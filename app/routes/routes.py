@@ -61,3 +61,20 @@ def register_routes(app):
     @app.route('/')
     def main():
         return render_template('main.html')
+    
+    @app.route('/privacy')
+    def privacy():
+        return render_template('privacy.html')
+
+    @app.route('/terms')
+    def terms():
+        return render_template('terms.html')
+    
+    @app.route('/contact', methods=['GET', 'POST'])
+    def contact():
+        form = ContactForm()
+        if form.validate_on_submit():
+        # Normally, you'd send an email or save the message to a database
+            flash("Thank you for your message. We'll get back to you soon.", "success")
+            return redirect(url_for('contact'))
+        return render_template('contact.html', form=form)
