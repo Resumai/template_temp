@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from datetime import datetime as dt
-from db import db
+from app import db
 
 
 class Car(db.Model):

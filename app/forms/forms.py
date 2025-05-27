@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, FloatField, SelectField, TextAreaField, DateField
 from wtforms.validators import DataRequired, Email, NumberRange, Length
 
+
 class StudentForm(FlaskForm):
     student_id = StringField('Student ID', validators=[DataRequired(), Length(min=3, max=20)])
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=50)])
@@ -14,6 +15,7 @@ class StudentForm(FlaskForm):
     gpa = FloatField('GPA', validators=[NumberRange(min=0.0, max=4.0)])
     address = TextAreaField('Address')
     status = SelectField('Status', choices=[('Active', 'Active'), ('Inactive', 'Inactive'), ('Graduated', 'Graduated')])
+
 
 class FacultyForm(FlaskForm):
     employee_id = StringField('Employee ID', validators=[DataRequired(), Length(min=3, max=20)])
@@ -33,6 +35,7 @@ class FacultyForm(FlaskForm):
     hire_date = DateField('Hire Date')
     office_location = StringField('Office Location', validators=[Length(max=100)])
     specialization = StringField('Specialization', validators=[Length(max=200)])
+
 
 class CourseForm(FlaskForm):
     code = StringField('Course Code', validators=[DataRequired(), Length(min=3, max=20)])
