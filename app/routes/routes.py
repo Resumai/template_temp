@@ -1,8 +1,10 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from app import db, User, Car, LoginForm, CarForm
 from werkzeug.security import check_password_hash
 from app import select_where
+from app.forms.contact_us import ContactForm
+from app.forms.registration_form import RegistrationForm
 
 
 # TODO: Create blueprints, etc.
