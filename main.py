@@ -1,10 +1,8 @@
 from flask import Flask, request
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash, check_password_hash
-from db import db
+from app import db, User
 
-# Models
-from app.models.user import User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
