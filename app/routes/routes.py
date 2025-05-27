@@ -15,7 +15,7 @@ from sqlalchemy.sql.elements import BinaryExpression
 from sqlalchemy import select
 
 
-
+# TODO: move to utils or smth
 class SelectWrapper:
     def __init__(self, model_class, *expressions):
         self.model_class = model_class
@@ -46,7 +46,7 @@ def select_where(*expressions : BinaryExpression):
 
 # app/routes/routes.py
 
-
+# TODO: Create blueprints, etc.
 def register_routes(app):
 
     @app.route('/login', methods=['GET', 'POST'])
