@@ -35,6 +35,7 @@ if __name__ == '__main__':
         # Create a admin user for testing if none exists - admin rights not yet implemented
         if not User.query.filter_by(email ='admin@mail.com').first():
             user = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
+            user = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
             db.session.add(user)
             db.session.commit()
     app.run(debug=True)
