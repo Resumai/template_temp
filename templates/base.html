@@ -13,6 +13,7 @@
     <header>
       <nav>
         <ul>
+          <li><a href="{{ url_for('main') }}">Home</a></li>
           {% if current_user.is_authenticated %}
           <li><a href="{{ url_for('car_list') }}">My Cars</a></li>
           <li><a href="{{ url_for('add_car') }}">Add Car</a></li>
@@ -28,8 +29,9 @@
 
     <footer>
       &copy; {{ current_year or '2025' }} University. All rights reserved.
-      <a href="#">Privacy Policy</a> |
-      <a href="#">Terms of Service</a>
+      <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
+      <a href="{{ url_for('terms') }}">Terms of Service</a> |
+      <a href="{{ url_for('contact') }}">Contact Us</a>
     </footer>
   </body>
 </html>
