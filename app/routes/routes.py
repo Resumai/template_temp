@@ -1,8 +1,10 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
-from app import db, User, Car, LoginForm, CarForm
+from app import db, User, Car, LoginForm, CarForm, ContactForm, RegistrationForm
 from werkzeug.security import check_password_hash
 from app import select_where
+from app.forms.contact_us import ContactForm
+from app.forms.registration_form import RegistrationForm
 
 
 # TODO: Create blueprints, etc.
@@ -78,3 +80,17 @@ def register_routes(app):
             flash("Thank you for your message. We'll get back to you soon.", "success")
             return redirect(url_for('contact'))
         return render_template('contact.html', form=form)
+    
+    @app.route('/register', methods=['GET', 'POST'])
+    def register():
+        form = RegistrationForm()
+        if form.validate_on_submit():
+        
+            return redirect(url_for('login'))
+    
+        return render_template('register.html', form=form)
+    
+    @app.route('/user-menu')
+    @login_required
+    def user_menu():
+        return render_template('user_menu.html')

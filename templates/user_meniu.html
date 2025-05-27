@@ -15,8 +15,7 @@
         <ul>
           <li><a href="{{ url_for('main') }}">Home</a></li>
           {% if current_user.is_authenticated %}
-          <li><a href="{{ url_for('car_list') }}">My Cars</a></li>
-          <li><a href="{{ url_for('add_car') }}">Add Car</a></li>
+          <li><a href="{{ url_for('user_menu') }}">User Menu</a></li>
           <li><a href="{{ url_for('logout') }}">Logout</a></li>
           {% else %}
           <li><a href="{{ url_for('login') }}">Login</a></li>
