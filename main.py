@@ -8,7 +8,7 @@ from app.models.user import User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # TODO: readjust for SQL instead of SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' 
 db.init_app(app)
 
 login_manager = LoginManager()

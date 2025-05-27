@@ -6,6 +6,8 @@ from db import db
 from app.forms.login_form import LoginForm
 from app.forms.car_form import CarForm
 from app.forms.contact_us import ContactForm
+from app.forms.registration_form import RegistrationForm
+
 # from app.forms.test_form import TestForm
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -119,3 +121,17 @@ def register_routes(app):
             flash("Thank you for your message. We'll get back to you soon.", "success")
             return redirect(url_for('contact'))
         return render_template('contact.html', form=form)
+    
+    @app.route('/register', methods=['GET', 'POST'])
+    def register():
+        form = RegistrationForm()
+        if form.validate_on_submit():
+        
+            return redirect(url_for('login'))
+    
+        return render_template('register.html', form=form)
+    
+    @app.route('/user-menu')
+    @login_required
+    def user_menu():
+        return render_template('user_menu.html')
