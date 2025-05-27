@@ -1,10 +1,8 @@
 from flask import Flask, request
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash, check_password_hash
-from db import db
+from app import db, User
 
-# Models
-from app.models.user import User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
@@ -20,20 +18,6 @@ login_manager.login_view = 'login'
 from app.routes.routes import register_routes
 register_routes(app)
 
-### TEST ROUTE ###
-# @app.route('/', methods=['GET', 'POST'])
-# def test():
-#     form = TestForm()
-#     if form.validate_on_submit():
-#         user = select_where(User.email == "test@example.com").one_or_none()
-#         if user:
-#             login_user(user)
-#             flash("User logged in successfully")
-#             return redirect(url_for('test'))
-#         else:
-#             flash("User not found")
-#             return redirect(url_for('test'))
-#     return render_template('test.html', form=form)
 
 
 ### LOGIN LOADER ###
