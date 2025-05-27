@@ -6,7 +6,7 @@ from app import db, User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # TODO: readjust for SQL instead of SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' 
 db.init_app(app)
 
 login_manager = LoginManager()
@@ -32,6 +32,7 @@ if __name__ == '__main__':
         db.create_all()
         # Create a admin user for testing if none exists - admin rights not yet implemented
         if not User.query.filter_by(email ='admin@mail.com').first():
+            user = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
             user = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
             db.session.add(user)
             db.session.commit()
