@@ -1,10 +1,11 @@
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from app.models.user import User
 from app.models.car import Car
 from db import db
 from app.forms.login_form import LoginForm
 from app.forms.car_form import CarForm
+from app.forms.contact_us import ContactForm
 # from app.forms.test_form import TestForm
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -101,3 +102,20 @@ def register_routes(app):
     @app.route('/')
     def main():
         return render_template('main.html')
+    
+    @app.route('/privacy')
+    def privacy():
+        return render_template('privacy.html')
+
+    @app.route('/terms')
+    def terms():
+        return render_template('terms.html')
+    
+    @app.route('/contact', methods=['GET', 'POST'])
+    def contact():
+        form = ContactForm()
+        if form.validate_on_submit():
+        # Normally, you'd send an email or save the message to a database
+            flash("Thank you for your message. We'll get back to you soon.", "success")
+            return redirect(url_for('contact'))
+        return render_template('contact.html', form=form)
