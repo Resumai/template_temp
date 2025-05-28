@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
-from db import db
+from app import db
+
 
 class User(UserMixin, db.Model):
     id = Column(Integer, primary_key=True)
