@@ -1,5 +1,8 @@
 from flask import Flask, render_template_string
-from template_temp.app.forms.login_form import LoginForm, RegistrationForm
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired, Email, EqualTo
+from app.models.user import User  # Assuming User model is defined in app.models.user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'testsecret'
