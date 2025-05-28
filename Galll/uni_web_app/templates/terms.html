@@ -1,0 +1,62 @@
+{% extends 'base.html' %} {% block title %} Terms and Conditions {% endblock %}
+{% block content %}
+<div class="container terms-page">
+  <h2>Terms and Conditions</h2>
+  <p class="effective-date">Effective Date: {{ current_year or '2025' }}</p>
+
+  <p>
+    These Terms and Conditions govern the use of our website and services. By
+    accessing or using our website, you agree to comply with and be bound by
+    these terms.
+  </p>
+
+  <h3>1. Acceptance of Terms</h3>
+  <p>
+    By using our website, you agree to these Terms and Conditions, including any
+    updates or modifications. If you do not agree, please refrain from using our
+    services.
+  </p>
+
+  <h3>2. Use of Our Service</h3>
+  <ul>
+    <li>You must not misuse the website or engage in any unlawful activity.</li>
+    <li>
+      We reserve the right to suspend or terminate your access if these terms
+      are violated.
+    </li>
+  </ul>
+
+  <h3>3. Intellectual Property</h3>
+  <p>
+    All content on this site, including but not limited to text, images, and
+    software, is the property of our platform and protected by intellectual
+    property laws.
+  </p>
+
+  <h3>4. Limitation of Liability</h3>
+  <p>
+    We do not guarantee that the website will be error-free. Your use of the
+    website is at your own risk. We are not responsible for any damage caused by
+    the use of this website.
+  </p>
+
+  <h3>5. Privacy Policy</h3>
+  <p>
+    For more information on how we protect your personal information, please
+    refer to our
+    <a href="{{ url_for('privacy') }}">Privacy Policy.</a>
+  </p>
+
+  <h3>6. Modifications</h3>
+  <p>
+    We reserve the right to update these Terms and Conditions at any time. All
+    changes will be posted on this page.
+  </p>
+
+  <h3>7. Contact Us</h3>
+  <p>
+    If you have any questions regarding these Terms and Conditions, please
+    contact us through the website.
+  </p>
+</div>
+{% endblock %}
