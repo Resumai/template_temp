@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 from db import db
+=======
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+from flask_login import UserMixin
+from app import db
+
+>>>>>>> dev
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -1,10 +1,36 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% block title %}Welcome - University{% endblock %} {%
+block content %}
+
 <div class="hero">
-  <h1>University</h1>
-  <p>Modern platform for students, lecturers, and administration</p>
-  <div class="btn-container">
-    <a href="{{ url_for('auth.login') }}">Login</a>
-    <a href="{{ url_for('auth.register') }}">Register</a>
+  <div class="hero-inner">
+    <h1 class="hero-title">University Platform</h1>
+    <p class="hero-subtitle">
+      Your centralized system for managing academic life – for students,
+      lecturers, and admins.
+    </p>
+    <a href="{{ url_for('login') }}" class="btn btn-hero">Login</a>
   </div>
 </div>
+<section class="features">
+  <div class="feature">
+    <h3>Student Portal</h3>
+    <p>
+      Access your study materials, schedules, and academic progress in one
+      place.
+    </p>
+  </div>
+  <div class="feature">
+    <h3>Lecturer Dashboard</h3>
+    <p>
+      Manage courses, communicate with students, and publish grades efficiently.
+    </p>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Need Help?</h2>
+  <p>We’re here to support students and staff. Contact us for any questions.</p>
+  <a href="{{ url_for('contact') }}" class="btn">Contact Us</a>
+</section>
+
 {% endblock %}

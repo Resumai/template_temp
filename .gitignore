@@ -9,6 +9,6 @@ templatetemp/app/forms/test_forms.py
 # Logs
 *.log
 
-# Databases
-*.sqlite3
-*.db
+# # Databases
+# *.sqlite3
+# *.db

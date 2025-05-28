@@ -1,1 +1,247 @@
+/* General Body Styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  color: #333;
+}
 
+/* --- Navigation --- */
+nav {
+  background-color: #606a7b;
+  padding: 1rem;
+  text-align: center;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline-block;
+  margin: 0 15px;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav ul li a:hover {
+  text-decoration: underline;
+}
+
+/* --- Main Content --- */
+main {
+  padding: 2rem;
+  padding-bottom: 60px; /* Added padding to prevent footer overlap */
+}
+
+/* --- Footer --- */
+footer {
+  background-color: #606a7b;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+
+/* --- Forms --- */
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.text-danger {
+  color: red;
+  font-size: 14px;
+}
+
+/* --- Buttons --- */
+.btn,
+.btn-policy,
+.btn-terms {
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-top: 20px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+.btn:hover,
+.btn-policy:hover,
+.btn-terms:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px); /* Button hover effect */
+}
+
+.btn:active,
+.btn-policy:active,
+.btn-terms:active {
+  transform: translateY(0); /* Slight press effect */
+}
+
+/* --- Hero Section --- */
+.hero {
+  background: linear-gradient(135deg, #4b6cb7, #182848);
+  color: white;
+  text-align: center;
+  padding: 4rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+}
+
+.hero-inner {
+  background: inherit;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- Features Section --- */
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: #f1f3f5;
+}
+
+.feature {
+  flex: 1 1 250px;
+  max-width: 300px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+/* --- Call To Action --- */
+.cta {
+  text-align: center;
+  background-color: #e9ecef;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+/* --- Privacy Policy and Terms Page Containers --- */
+.policy-page,
+.terms-page {
+  background-color: #f8f9fa;
+  padding: 3rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Page Title Styling --- */
+.policy-page h2,
+.terms-page h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+/* Effective Date Styling */
+.effective-date {
+  font-size: 1.1rem;
+  color: #606a7b;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Section Title Styling */
+.policy-page h3,
+.terms-page h3 {
+  font-size: 1.8rem;
+  margin-top: 2rem;
+  color: #182848;
+  border-bottom: 2px solid #4b6cb7;
+  padding-bottom: 5px;
+}
+
+/* Paragraph Styles */
+.policy-page p,
+.terms-page p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 1.5rem; /* Increased margin between paragraphs */
+  text-align: justify;
+}
+
+/* Lists inside the content */
+.policy-page ul,
+.terms-page ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 2rem;
+}
+
+.policy-page li,
+.terms-page li {
+  margin-bottom: 1rem;
+}
+
+/* Link Styling */
+.policy-page a,
+.terms-page a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.policy-page a:hover,
+.terms-page a:hover {
+  text-decoration: underline;
+}
+
+/* --- Footer Styling (Fixed) --- */
+footer {
+  background-color: #606a7b;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}

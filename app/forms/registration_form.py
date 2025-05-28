@@ -1,13 +1,12 @@
-import re
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError
-from wtforms.validators import DataRequired, Email, Length, EqualTo
-from wtforms.widgets import PasswordInput
+from wtforms import PasswordField, SubmitField, EmailField, BooleanField
+from wtforms.validators import DataRequired, Length, EqualTo, Email
+from app.models.password_validator import CustomPasswordValidator
 
 
 
 class RegistrationForm(FlaskForm):
-    email = StringField(
+    email = EmailField(
         'Email Address',
         validators=[
             DataRequired(message="Email is required"),
@@ -20,12 +19,13 @@ class RegistrationForm(FlaskForm):
             "autocomplete": "email"
         }
     )
-    
+
     password = PasswordField(
         'Password',
         validators=[
             DataRequired(message="Password is required"),
-            Length(min=8, message="Password must be at least 8 characters long")
+            Length(min=8, max=20, message="Password must be 8-20 characters long"),
+            CustomPasswordValidator()
         ],
         render_kw={
             "placeholder": "Create a password",
@@ -33,7 +33,7 @@ class RegistrationForm(FlaskForm):
             "autocomplete": "new-password"
         }
     )
-    
+
     confirm_password = PasswordField(
         'Confirm Password',
         validators=[
@@ -46,7 +46,7 @@ class RegistrationForm(FlaskForm):
             "autocomplete": "new-password"
         }
     )
-    
+
     terms_accepted = BooleanField(
         'I agree to the Terms of Service and Privacy Policy',
         validators=[
@@ -54,8 +54,8 @@ class RegistrationForm(FlaskForm):
         ],
         render_kw={"class": "form-check-input"}
     )
-    
+
     submit = SubmitField(
         'Create Account',
-        render_kw={"class": "btn btn-success"}
+        render_kw={"class": "btn btn-success w-100"}
     )
