@@ -1,23 +1,37 @@
-from flask import Flask, request
+from flask import Flask
 from flask_login import LoginManager
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_bcrypt import generate_password_hash
 from app import db, User
+from app.routes.routes import bp, car_bp, auth_bp, info_bp
 
 
-app = Flask(__name__)
+### MOCK DATA ###
+from app.utils.mock_gen import generate_mock_data
+
+
+### FLASK SET-UP ###
+app = Flask(
+    __name__,
+    template_folder='app/templates',
+    static_folder='app/static'
+    )
 app.config['SECRET_KEY'] = 'secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+
+### INIT DB ###
 db.init_app(app)
 
+### LOGIN MANAGER ###
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
 ### ROUTES ###
-from app.routes.routes import register_routes
-register_routes(app)
-
+app.register_blueprint(bp, url_prefix='/')
+app.register_blueprint(car_bp, url_prefix='/car')
+app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(info_bp, url_prefix='/info')
 
 
 ### LOGIN LOADER ###
@@ -30,10 +44,22 @@ def load_user(user_id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # Create a admin user for testing if none exists - admin rights not yet implemented
-        if not User.query.filter_by(email ='admin@mail.com').first():
-            user = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
-            user = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
-            db.session.add(user)
+
+        # Hardcoded admin user
+        if not User.query.filter_by(email = 'admin@mail.com').first():
+            admin = User(
+                name = 'Admin',
+                email = 'admin@mail.com',
+                password_hash = generate_password_hash('password'),
+                role = 'admin',
+                program_id = None,   # or assign a valid ID if needed
+                group_id = None      # or assign a valid ID if needed
+            )
+
+            db.session.add(admin)
             db.session.commit()
+
+        # Mock data generation execution
+        generate_mock_data()
+
     app.run(debug=True)

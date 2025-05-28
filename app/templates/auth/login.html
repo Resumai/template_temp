@@ -1,8 +1,8 @@
-{% extends 'base.html' %} {% block title %} Register - University {% endblock %}
-{% block content %}
+{% extends 'base.html' %} {% block title %} Login Page {% endblock %} {% block
+content %}
 <div class="container" style="max-width: 500px">
-  <h2 class="mb-4">Register</h2>
-  <form method="POST" action="{{ url_for('register') }}">
+  <h2 class="mb-4">Login</h2>
+  <form method="POST" action="{{ url_for('auth.login') }}">
     {{ form.hidden_tag() }}
 
     <div class="form-group mb-3">
@@ -29,28 +29,9 @@
       {% endif %}
     </div>
 
-    <div class="form-group mb-3">
-      <label for="confirm_password">Confirm Password</label>
-      {{ form.confirm_password(class="form-control", placeholder="Password") }}
-      {% if form.confirm_password.errors %}
-      <div class="text-danger">
-        {% for error in form.confirm_password.errors %}
-        <p>{{ error }}</p>
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
-
     <div class="form-group">
       {{ form.submit(class="btn btn-primary w-100") }}
     </div>
   </form>
 </div>
-{% endblock %} {% block footer %}
-<footer>
-  &copy; {{ current_year or '2025' }} University. All rights reserved.
-  <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
-  <a href="{{ url_for('terms') }}">Terms of Service</a> |
-  <a href="{{ url_for('contact') }}">Contact Us</a>
-</footer>
 {% endblock %}
