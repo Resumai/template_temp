@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container" style="max-width: 500px">
   <h2 class="mb-4">Register</h2>
-  <form method="POST" action="{{ url_for('register') }}">
+  <form method="POST" action="{{ url_for('auth.register') }}">
     {{ form.hidden_tag() }}
 
     <div class="form-group mb-3">
@@ -78,8 +78,8 @@
     <div class="form-check mb-3">
       {{ form.terms_accepted(class="form-check-input") }}
       <label class="form-check-label" for="terms_accepted">
-        I agree to the <a href="{{ url_for('terms') }}">Terms</a> and
-        <a href="{{ url_for('privacy') }}">Privacy Policy</a>.
+        I agree to the <a href="{{ url_for('core.terms') }}">Terms</a> and
+        <a href="{{ url_for('core.privacy') }}">Privacy Policy</a>.
       </label>
       {% if form.terms_accepted.errors %}
       <div class="text-danger">
@@ -99,8 +99,8 @@
 <footer class="text-center mt-5">
   &copy; {{ current_year or '2025' }} University. All rights reserved.
   <br />
-  <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
-  <a href="{{ url_for('terms') }}">Terms of Service</a> |
-  <a href="{{ url_for('contact') }}">Contact Us</a>
+  <a href="{{ url_for('core.privacy') }}">Privacy Policy</a> |
+  <a href="{{ url_for('core.terms') }}">Terms of Service</a> |
+  <a href="{{ url_for('core.contact') }}">Contact Us</a>
 </footer>
 {% endblock %}
