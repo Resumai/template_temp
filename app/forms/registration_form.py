@@ -4,6 +4,12 @@ from wtforms.validators import DataRequired, Length, EqualTo, Email
 from app.models.password_validator import CustomPasswordValidator
 
 
+from flask_wtf import FlaskForm
+from wtforms import PasswordField, SubmitField, BooleanField
+from wtforms.fields import EmailField
+from wtforms.validators import DataRequired, Email, Length, EqualTo
+from app.models.password_validator import CustomPasswordValidator
+
 
 class RegistrationForm(FlaskForm):
     email = EmailField(

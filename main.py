@@ -32,10 +32,23 @@ def load_user(user_id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
         # Create a admin user for testing if none exists - admin rights not yet implemented
-        if not User.query.filter_by(email ='admin@mail.com').first():
-            user = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
-            user = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
-            db.session.add(user)
+        # if not User.query.filter_by(email ='admin@mail.com').first():
+        #     admin = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
+
+
+        if not User.query.filter_by(email='admin@mail.com').first():
+            admin = User(
+                name='Admin',
+                email='admin@mail.com',
+                password_hash=generate_password_hash('password'),
+                role='admin',
+                program_id=None,   # or assign a valid ID if needed
+                group_id=None      # or assign a valid ID if needed
+            )
+
+
+            db.session.add(admin)
             db.session.commit()
     app.run(debug=True)
