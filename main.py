@@ -3,7 +3,11 @@ from flask_login import LoginManager
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, User
 
+### MOCK DATA ###
+from app.utils.mock_gen import generate_mock_data
 
+
+### NOT SURE WHAT TO NAME THIS ###
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' 
@@ -31,11 +35,7 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
 
-        # Create a admin user for testing if none exists - admin rights not yet implemented
-        # if not User.query.filter_by(email ='admin@mail.com').first():
-        #     admin = User(username='Admin', email ='admin@mail.com', password_hash = generate_password_hash('password'))
-
-
+        # Hardcoded admin user
         if not User.query.filter_by(email='admin@mail.com').first():
             admin = User(
                 name='Admin',
@@ -46,7 +46,11 @@ if __name__ == '__main__':
                 group_id=None      # or assign a valid ID if needed
             )
 
-
             db.session.add(admin)
             db.session.commit()
+
+
+        # Mock data generation executions
+        generate_mock_data()
+    
     app.run(debug=True)
