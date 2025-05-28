@@ -78,8 +78,8 @@
     <div class="form-check mb-3">
       {{ form.terms_accepted(class="form-check-input") }}
       <label class="form-check-label" for="terms_accepted">
-        I agree to the <a href="{{ url_for('core.terms') }}">Terms</a> and
-        <a href="{{ url_for('core.privacy') }}">Privacy Policy</a>.
+        I agree to the <a href="{{ url_for('info.terms') }}">Terms</a> and
+        <a href="{{ url_for('info.privacy') }}">Privacy Policy</a>.
       </label>
       {% if form.terms_accepted.errors %}
       <div class="text-danger">
@@ -99,8 +99,8 @@
 <footer class="text-center mt-5">
   &copy; {{ current_year or '2025' }} University. All rights reserved.
   <br />
-  <a href="{{ url_for('core.privacy') }}">Privacy Policy</a> |
-  <a href="{{ url_for('core.terms') }}">Terms of Service</a> |
-  <a href="{{ url_for('core.contact') }}">Contact Us</a>
+  <a href="{{ url_for('info.privacy') }}">Privacy Policy</a> |
+  <a href="{{ url_for('info.terms') }}">Terms of Service</a> |
+  <a href="{{ url_for('info.contact_us') }}">Contact Us</a>
 </footer>
 {% endblock %}

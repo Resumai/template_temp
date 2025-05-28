@@ -1,10 +1,9 @@
-from flask import Flask, request
+from flask import Flask
 from flask_login import LoginManager
 from flask_bcrypt import generate_password_hash
 from app import db, User
-from app.routes.routes import bp
-from app.routes.routes import car_bp
-from app.routes.routes import auth_bp
+from app.routes.routes import bp, car_bp, auth_bp, info_bp
+
 
 ### MOCK DATA ###
 from app.utils.mock_gen import generate_mock_data
@@ -32,6 +31,8 @@ login_manager.login_view = 'login'
 app.register_blueprint(bp, url_prefix='/')
 app.register_blueprint(car_bp, url_prefix='/car')
 app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(info_bp, url_prefix='/info')
+
 
 ### LOGIN LOADER ###
 @login_manager.user_loader
@@ -58,7 +59,7 @@ if __name__ == '__main__':
             db.session.add(admin)
             db.session.commit()
 
-
-        # Mock data generation executions
+        # Mock data generation execution
         generate_mock_data()
+
     app.run(debug=True)

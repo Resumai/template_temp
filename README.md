@@ -5,7 +5,7 @@
 ## 1. 🎯 Project Goal
 Create a complex university management system that includes:
 
-- [ ] User authentication and registration for students and lecturers
+- [x] User authentication and registration for students and lecturers
 - [ ] CRUD operations for modules (courses)
 - [ ] Administration panel for managing users, modules, programs, groups, and relationships
 - [ ] Database integration with migrations

@@ -5,10 +5,11 @@ from flask_bcrypt import check_password_hash, generate_password_hash
 from app import select_where
 
 
-### Blueprints ###
+### Blueprint Registration ###
 bp = Blueprint('core', __name__)
 auth_bp = Blueprint('auth', __name__)
 car_bp = Blueprint('car', __name__)
+info_bp = Blueprint('info', __name__)
 
 
 ### Auth related routes ###
@@ -92,27 +93,29 @@ def delete_car(car_id):
     return redirect(url_for('car.car_list'))
 
 
-### Core/Unsorted routes ###
-@bp.route('/')
-def index():
-    return render_template('index.html')
-
-@bp.route('/privacy')
+### Info routes ###
+@info_bp.route('/privacy')
 def privacy():
-    return render_template('privacy.html')
+    return render_template('info/privacy.html')
 
-@bp.route('/terms')
+@info_bp.route('/terms')
 def terms():
-    return render_template('terms.html')
+    return render_template('info/terms.html')
 
-@bp.route('/contact', methods=['GET', 'POST'])
-def contact():
+@info_bp.route('/contact', methods=['GET', 'POST'])
+def contact_us():
     form = ContactForm()
     if form.validate_on_submit():
     # Normally, you'd send an email or save the message to a database
         flash("Thank you for your message. We'll get back to you soon.", "success")
-        return redirect(url_for('core.contact'))
-    return render_template('contact.html', form=form)
+        return redirect(url_for('core.contact_us'))
+    return render_template('info/contact_us.html', form=form)
+
+
+### Core/Unsorted routes ###
+@bp.route('/')
+def index():
+    return render_template('index.html')
 
 @bp.route('/user-menu')
 @login_required
@@ -122,7 +125,9 @@ def user_menu():
 @bp.route('/image-import-test')
 def image_import_test():
     return render_template('image_import_test.html')
-    
+
+
+# TODO: Need to move to utils? Not sure.
 def get_or_create_group(program):
     group = StudentGroup.query.filter_by(program=program).first()
     if not group:

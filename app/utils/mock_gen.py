@@ -2,7 +2,7 @@ from app.models.user import User, StudentGroup
 from app.models.study_program import StudyProgram, Faculty
 from app.models.module import Module, Assessment
 from app.models.enrollment import Enrollment
-from werkzeug.security import generate_password_hash
+from flask_bcrypt import generate_password_hash
 from datetime import datetime
 from app import db
 
