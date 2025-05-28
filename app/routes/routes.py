@@ -95,6 +95,31 @@ def register_routes(app):
     def user_menu():
         return render_template('user_menu.html')
     
-    @app.route('/image-import-test')
+    @app.route('/image-import-test', methods=['GET', 'POST'])
+    @login_required
     def image_import_test():
-        return render_template('image_import_test.html')
+        from app.forms.forms import ImageUploadForm  
+
+        form = ImageUploadForm()
+        if form.validate_on_submit():
+            image = form.image.data
+            from werkzeug.utils import secure_filename
+            import os
+
+            # Generate a unique filename
+            # and save the image to a secure location
+            filename = secure_filename(f"{current_user.id}_{image.filename}")
+            upload_folder = os.path.join('static', 'uploads')
+            os.makedirs(upload_folder, exist_ok=True)
+
+            filepath = os.path.join(upload_folder, filename)
+            image.save(filepath)
+
+            
+            current_user.profile_picture = filepath
+            db.session.commit()
+
+            flash("Paveikslėlis įkeltas sėkmingai!", "success")
+            return redirect(url_for('image_import_test'))
+
+        return render_template('test_upload.html', form=form, image=current_user.profile_picture)
