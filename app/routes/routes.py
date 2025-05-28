@@ -1,10 +1,12 @@
 from flask import render_template, redirect, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from app import db, User, Car, LoginForm, CarForm, ContactForm, RegistrationForm
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from app import select_where
 from app.forms.contact_us import ContactForm
 from app.forms.registration_form import RegistrationForm
+from app.models.user import StudentGroup
+from app.models.study_program import StudyProgram
 
 
 # TODO: Create blueprints, etc.
@@ -84,12 +86,30 @@ def register_routes(app):
     @app.route('/register', methods=['GET', 'POST'])
     def register():
         form = RegistrationForm()
+        form.program.choices = [(str(p.id), p.name) for p in StudyProgram.query.all()]
         if form.validate_on_submit():
+            selected_program = StudyProgram.query.get(int(form.program.data))
+            role = form.role.data
+            email = form.email.data
+            password = form.password.data
+
+            group = get_or_create_group(selected_program)
             
+            user = User(
+                name=form.name.data,
+                email=email,
+                password_hash=generate_password_hash(password),
+                role=role,
+                program=selected_program,
+                group=group
+            )
+
+            db.session.add(user)
+            db.session.commit()
             return redirect(url_for('login'))
     
         return render_template('register.html', form=form)
-    
+      
     @app.route('/user-menu')
     @login_required
     def user_menu():
@@ -98,3 +118,11 @@ def register_routes(app):
     @app.route('/image-import-test')
     def image_import_test():
         return render_template('image_import_test.html')
+    
+def get_or_create_group(program):
+    group = StudentGroup.query.filter_by(program=program).first()
+    if not group:
+        group = StudentGroup(name=f"{program.name}-Group", program=program)
+        db.session.add(group)
+        db.session.commit()
+    return group
