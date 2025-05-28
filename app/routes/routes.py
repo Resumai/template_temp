@@ -85,7 +85,7 @@ def register_routes(app):
     def register():
         form = RegistrationForm()
         if form.validate_on_submit():
-        
+            
             return redirect(url_for('login'))
     
         return render_template('register.html', form=form)

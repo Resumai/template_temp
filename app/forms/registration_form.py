@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, SubmitField, EmailField, BooleanField
+from wtforms import PasswordField, SubmitField, EmailField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
 from app.models.password_validator import CustomPasswordValidator
 
@@ -45,6 +45,34 @@ class RegistrationForm(FlaskForm):
             "placeholder": "Confirm your password",
             "class": "form-control",
             "autocomplete": "new-password"
+        }
+    )
+
+    user_type = SelectField(
+        'User Type',
+        choices = [
+            ('', '-- Select User Type --'),
+            ('student', 'Student'),
+            ('techer', 'Teacher'),
+        ],
+        validators=[DataRequired(message="Please select a user type")],
+        render_kw={
+            "class": "form-select",
+        }
+    )
+
+    program = SelectField(
+        'Study Program',
+        choices=[
+            ('', '-- Select Program --'),
+            ('computer_science', 'Computer Science'),
+            ('data_science', 'Data Science'),
+            ('web_development', 'Web Development'),
+            ('cyber_security', 'Cyber Security')
+        ],
+        validators=[DataRequired(message="Please select a program")],
+        render_kw={
+            "class": "form-select",
         }
     )
 
