@@ -1,10 +1,19 @@
 from app.extensions import db
 
 
+# from app.models.student import Student
 
 # Models
 from app.models.user import User
-from app.models.student import Student
+from app.models.user import StudentGroup
+
+from app.models.study_program import StudyProgram
+from app.models.study_program import Faculty
+
+from app.models.module import Module
+from app.models.module import Assessment
+
+from app.models.enrollment import Enrollment
 
 
 
