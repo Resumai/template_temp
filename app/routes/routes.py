@@ -94,3 +94,7 @@ def register_routes(app):
     @login_required
     def user_menu():
         return render_template('user_menu.html')
+    
+    @app.route('/image-import-test')
+    def image_import_test():
+        return render_template('image_import_test.html')
