@@ -99,27 +99,23 @@ def register_routes(app):
     @login_required
     def image_import_test():
         from app.forms.forms import ImageUploadForm  
+        from werkzeug.utils import secure_filename
+        import os
 
         form = ImageUploadForm()
         if form.validate_on_submit():
             image = form.image.data
-            from werkzeug.utils import secure_filename
-            import os
-
-            # Generate a unique filename
-            # and save the image to a secure location
             filename = secure_filename(f"{current_user.id}_{image.filename}")
-            upload_folder = os.path.join('static', 'uploads')
-            os.makedirs(upload_folder, exist_ok=True)
+            relative_path = f"uploads/{filename}"  # ✅ tik nuo "static/"
+            full_path = os.path.join('static', relative_path)
 
-            filepath = os.path.join(upload_folder, filename)
-            image.save(filepath)
+            os.makedirs(os.path.dirname(full_path), exist_ok=True)
+            image.save(full_path)
 
-            
-            current_user.profile_picture = filepath
+            current_user.profile_picture = relative_path
             db.session.commit()
 
             flash("Paveikslėlis įkeltas sėkmingai!", "success")
             return redirect(url_for('image_import_test'))
 
-        return render_template('test_upload.html', form=form, image=current_user.profile_picture)
+        return render_template('image_import_test.html', form=form, image=current_user.profile_picture)
