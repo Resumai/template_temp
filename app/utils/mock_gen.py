@@ -7,6 +7,7 @@ from datetime import datetime
 from app import db
 
 
+# Generation of mock data for testing DB related functionality
 def generate_mock_data():
     # --- Faculty ---
     if not Faculty.query.first():
