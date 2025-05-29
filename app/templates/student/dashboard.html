@@ -1,0 +1,9 @@
+{% extends 'base.html' %} {% block title %}Student Dashboard{% endblock %} {%
+block content %}
+<h2>Student Dashboard</h2>
+<ul>
+  <li><a href="{{ url_for('car.car_list') }}">My Cars</a></li>
+  <li><a href="#">My Study Program</a></li>
+  <li><a href="#">Group Members</a></li>
+</ul>
+{% endblock %}

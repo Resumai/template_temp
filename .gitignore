@@ -11,4 +11,9 @@ templatetemp/app/forms/test_forms.py
 
 # # Databases
 # *.sqlite3
-# *.db
+*.db
+
+# Images
+*.jpg
+*.jpeg
+*.png

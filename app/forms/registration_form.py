@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, SubmitField, EmailField, BooleanField
+from wtforms import PasswordField, SubmitField, EmailField, BooleanField, SelectField, StringField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
 from app.models.password_validator import CustomPasswordValidator
 
@@ -40,6 +40,33 @@ class RegistrationForm(FlaskForm):
         }
     )
 
+    name = StringField(
+        'Full Name',
+        validators=[
+            DataRequired(message="Name is required"),
+            Length(max=100, message="Name must be less than 100 characters")
+        ],
+        render_kw={
+            "placeholder": "Enter your full name",
+            "class": "form-control"
+        }
+    )
+
+    role = SelectField(
+        'Role',
+        choices=[('student', 'Student'), ('teacher', 'Teacher')],
+        validators=[DataRequired()],
+        render_kw={"class": "form-select"}
+    )
+
+    program = SelectField(
+        'Study Program',
+        choices=[],  # bus užpildyta view funkcijoje
+        validators=[DataRequired()],
+        render_kw={"class": "form-select"}
+    )
+
+
     confirm_password = PasswordField(
         'Confirm Password',
         validators=[
@@ -52,6 +79,8 @@ class RegistrationForm(FlaskForm):
             "autocomplete": "new-password"
         }
     )
+
+    
 
     terms_accepted = BooleanField(
         'I agree to the Terms of Service and Privacy Policy',
