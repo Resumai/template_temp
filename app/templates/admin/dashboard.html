@@ -1,0 +1,10 @@
+{% extends 'base.html' %} {% block title %}Admin Dashboard{% endblock %} {%
+block content %}
+<h2>Admin Dashboard</h2>
+<ul>
+  <li><a href="{{ url_for('car.car_list') }}">Manage Cars</a></li>
+  <li><a href="{{ url_for('core.index') }}">Home</a></li>
+  <li><a href="{{ url_for('info.contact_us') }}">Contact Users</a></li>
+  <li><a href="#">Manage Users / Programs</a></li>
+</ul>
+{% endblock %}

@@ -1,12 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
-from flask_bcrypt import generate_password_hash
-from app import db, User
+from app import db, User, create_admin_user, generate_mock_data
 from app.routes.routes import bp, car_bp, auth_bp, info_bp
-
-
-### MOCK DATA ###
-from app.utils.mock_gen import generate_mock_data
 
 
 ### FLASK SET-UP ###
@@ -46,18 +41,7 @@ if __name__ == '__main__':
         db.create_all()
 
         # Hardcoded admin user
-        if not User.query.filter_by(email = 'admin@mail.com').first():
-            admin = User(
-                name = 'Admin',
-                email = 'admin@mail.com',
-                password_hash = generate_password_hash('password'),
-                role = 'admin',
-                program_id = None,   # or assign a valid ID if needed
-                group_id = None      # or assign a valid ID if needed
-            )
-
-            db.session.add(admin)
-            db.session.commit()
+        create_admin_user()
 
         # Mock data generation execution
         generate_mock_data()
