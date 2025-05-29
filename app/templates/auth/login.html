@@ -2,7 +2,7 @@
 content %}
 <div class="container" style="max-width: 500px">
   <h2 class="mb-4">Login</h2>
-  <form method="POST" action="{{ url_for('login') }}">
+  <form method="POST" action="{{ url_for('auth.login') }}">
     {{ form.hidden_tag() }}
 
     <div class="form-group mb-3">
