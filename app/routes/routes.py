@@ -137,10 +137,6 @@ def index():
 def user_menu():
     return render_template('user_menu.html')
 
-@bp.route('/image-import-test')
-def image_import_test():
-    return render_template('image_import_test.html')
-
 
 @bp.route('/admin-dashboard')
 @roles_required('admin')
@@ -156,3 +152,28 @@ def teacher_dashboard():
 @roles_required('student')
 def student_dashboard():
     return render_template('student/dashboard.html')
+
+@bp.route('/image-import-test', methods=['GET', 'POST'])
+@login_required
+def image_import_test():
+    from app.forms.forms import ImageUploadForm  
+    from werkzeug.utils import secure_filename
+    import os
+
+    form = ImageUploadForm()
+    if form.validate_on_submit():
+        image = form.image.data
+        filename = secure_filename(f"{current_user.id}_{image.filename}")
+        relative_path = f"uploads/{filename}"  # ✅ tik nuo "static/"
+        full_path = os.path.join('static', relative_path)
+
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
+        image.save(full_path)
+
+        current_user.profile_picture = relative_path
+        db.session.commit()
+
+        flash("Paveikslėlis įkeltas sėkmingai!", "success")
+        return redirect(url_for('image_import_test'))
+
+    return render_template('image_import_test.html', form=form, image=current_user.profile_picture)

@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FloatField, SelectField, TextAreaField, DateField
+from wtforms import StringField, IntegerField, FloatField, SelectField, TextAreaField, DateField, SubmitField
 from wtforms.validators import DataRequired, Email, NumberRange, Length
+from flask_wtf.file import FileField, FileAllowed
+
 
 
 class StudentForm(FlaskForm):
@@ -67,3 +69,9 @@ class EnrollmentForm(FlaskForm):
         ('Dropped', 'Dropped'),
         ('Withdrawn', 'Withdrawn')
     ])
+
+class ImageUploadForm(FlaskForm):
+    image = FileField('Choose picture', validators=[
+        FileAllowed(['jpg', 'jpeg', 'png'], 'Only .jpg, .jpeg or .png files are allowed.'),
+    ])
+    submit = SubmitField('Upload Image')
