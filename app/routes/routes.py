@@ -3,6 +3,8 @@ from flask_login import login_user, login_required, logout_user, current_user
 from app import db, User, Car, LoginForm, CarForm, ContactForm, RegistrationForm, StudentGroup, StudyProgram
 from flask_bcrypt import check_password_hash, generate_password_hash
 from app import select_where
+from app.utils.group_utils import get_or_create_group
+from app.utils.auth_utils import roles_required
 
 
 ### Blueprint Registration ###
@@ -20,7 +22,20 @@ def login():
         user : User = select_where(User.email == form.email.data).one_or_none()
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user)
-            return redirect(url_for('car.car_list'))
+
+            if user.role == 'admin':
+                flash("Welcome back, Admin!", "success")
+                return redirect(url_for('core.admin_dashboard'))
+            elif user.role == 'teacher':
+                flash("Welcome back, Teacher!", "success")
+                return redirect(url_for('core.teacher_dashboard'))
+            elif user.role == 'student':
+                flash("Welcome back, Student!", "success")
+                return redirect(url_for('core.student_dashboard'))
+            else:
+                flash("Unknown role. Please contact support.", "danger")
+                return redirect(url_for('login'))
+            
     return render_template('auth/login.html', form=form)
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -127,11 +142,17 @@ def image_import_test():
     return render_template('image_import_test.html')
 
 
-# TODO: Need to move to utils? Not sure.
-def get_or_create_group(program):
-    group = StudentGroup.query.filter_by(program=program).first()
-    if not group:
-        group = StudentGroup(name=f"{program.name}-Group", program=program)
-        db.session.add(group)
-        db.session.commit()
-    return group
+@bp.route('/admin-dashboard')
+@roles_required('admin')
+def admin_dashboard():
+    return render_template('admin/dashboard.html')
+
+@bp.route('/teacher-dashboard')
+@roles_required('teacher')
+def teacher_dashboard():
+    return render_template('teacher/dashboard.html')
+
+@bp.route('/student-dashboard')
+@roles_required('student')
+def student_dashboard():
+    return render_template('student/dashboard.html')
