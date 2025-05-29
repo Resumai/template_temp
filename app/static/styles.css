@@ -156,10 +156,16 @@ footer {
 
 /* --- Call To Action --- */
 .cta {
+  background-color: #f9f9f9;
+  padding: 40px 20px;
   text-align: center;
-  background-color: #e9ecef;
-  padding: 2rem;
-  margin-top: 2rem;
+  margin-top: 50px;
+  position: relative;
+}
+
+.cta .btn {
+  margin-top: 20px;
+  display: inline-block;
 }
 
 /* --- Privacy Policy and Terms Page Containers --- */
@@ -244,4 +250,166 @@ footer {
   position: fixed;
   width: 100%;
   bottom: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f7fc;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #5c6bc0;
+  margin-bottom: 20px;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #3f51b5;
+}
+
+ul.list-group {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul.list-group li {
+  background-color: #f9f9f9;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+ul.list-group li strong {
+  font-size: 1.1rem;
+  color: #3f51b5;
+}
+
+ul.list-group li small {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #757575;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #3f51b5;
+  color: white;
+}
+
+.table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.card p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.card p strong {
+  color: #3f51b5;
+}
+
+/* Specific Styles for Student Dashboard */
+.student-dashboard {
+  background-color: #e8f5e9;
+}
+
+.student-dashboard .card-title {
+  color: #388e3c;
+}
+
+.student-dashboard ul.list-group li {
+  background-color: #dcedc8;
+}
+
+.student-dashboard .table th {
+  background-color: #388e3c;
+}
+
+/* Specific Styles for Teacher Dashboard */
+.teacher-dashboard {
+  background-color: #f3e5f5;
+}
+
+.teacher-dashboard .card-title {
+  color: #9c27b0;
+}
+
+.teacher-dashboard ul.list-group li {
+  background-color: #f8bbd0;
+}
+
+.teacher-dashboard .table th {
+  background-color: #9c27b0;
+}
+
+/* Additional Utility Classes */
+.mb-4 {
+  margin-bottom: 20px;
+}
+
+.mt-4 {
+  margin-top: 20px;
+}
+
+.text-primary {
+  color: #3f51b5;
+}
+
+.text-success {
+  color: #385c8e;
+}
+
+.text-info {
+  color: #0288d1;
+}
+
+.text-warning {
+  color: #f57c00;
+}
+
+.text-muted {
+  color: #757575;
 }

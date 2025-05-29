@@ -1,9 +1,69 @@
-{% extends 'base.html' %} {% block title %}Student Dashboard{% endblock %} {%
+{% extends 'base.html' %} {% block title %} Student Dashboard {% endblock %} {%
 block content %}
-<h2>Student Dashboard</h2>
-<ul>
-  <li><a href="{{ url_for('car.car_list') }}">My Cars</a></li>
-  <li><a href="#">My Study Program</a></li>
-  <li><a href="#">Group Members</a></li>
-</ul>
+<div class="container student-dashboard mt-4">
+  <h2 class="text-primary mb-4">👋 Welcome, {{ current_user.name }}</h2>
+
+  <!-- Academic Information -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title text-success">📘 Academic Information</h5>
+      <p><strong>Email:</strong> {{ current_user.email }}</p>
+      <p><strong>Program:</strong> {{ current_user.program.name }}</p>
+      <p><strong>Group:</strong> {{ current_user.group.name }}</p>
+    </div>
+  </div>
+
+  <!-- Assigned Modules -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title text-success">📚 Assigned Modules</h5>
+      {% if modules %}
+      <ul class="list-group">
+        {% for module in modules %}
+        <li class="list-group-item">
+          <strong>{{ module.name }}</strong> ({{ module.code }})
+          <br />
+          <small>Teacher: {{ module.teacher.name }}</small>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No modules assigned.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Schedule -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title text-success">🗓️ Schedule</h5>
+      {% if schedule %}
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Module</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in schedule %}
+          <tr>
+            <td>{{ item.date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ item.time }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.module.name }}</td>
+            <td>{{ item.location }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>The schedule is not yet available.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}
