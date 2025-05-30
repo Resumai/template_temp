@@ -5,6 +5,7 @@ from flask_bcrypt import check_password_hash, generate_password_hash
 from app import select_where
 from app.utils.group_utils import get_or_create_group
 from app.utils.auth_utils import roles_required
+from app.utils.utils import image_upload
 
 # New imports
 from app.forms.forms import ImageUploadForm  
@@ -158,23 +159,13 @@ def teacher_dashboard():
 def student_dashboard():
     return render_template('student/dashboard.html')
 
-# TODO: Refactor further for easier use
+# TODO: May still benefit from refactoring
 @bp.route('/image-import-test', methods=['GET', 'POST'])
 @login_required
 def image_import_test():
     form = ImageUploadForm()
     if form.validate_on_submit():
-        image = form.image.data
-        filename = form.generate_filename()
-        relative_path = f"uploads/{filename}" 
-
-        # Translates to app/static/uploads/{filename}
-        full_path = os.path.join('app/static', relative_path) 
-        os.makedirs(os.path.dirname(full_path), exist_ok=True)
-        image.save(full_path)
-
-        current_user.profile_picture = relative_path
-        db.session.commit()
+        image_upload(form, current_user)
         return redirect(url_for('core.image_import_test'))
 
     return render_template('image_import_test.html', form=form, image=current_user.profile_picture)
