@@ -2,7 +2,7 @@ from app import db
 from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 from flask_bcrypt import generate_password_hash, check_password_hash
-
+from datetime import datetime, timedelta
 
 
 class User(UserMixin, db.Model):
@@ -31,7 +31,19 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    def is_temporarily_blocked(self):
+        """Check if user is currently blocked."""
+        return self.blocked_until and self.blocked_until > datetime.utcnow()
 
+    def block_for_minutes(self, minutes=5):
+        """Block user for a specified number of minutes."""
+        self.blocked_until = datetime.utcnow() + timedelta(minutes=minutes)
+
+
+# POSSIBBLE IMPROVEMENTS: add a block reason , audit log or ip tracking
+# auto-unblock user after a certain time period
+# *show remaining time 
 
 
 class StudentGroup(db.Model):

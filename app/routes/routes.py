@@ -25,24 +25,48 @@ info_bp = Blueprint('info', __name__)
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user : User = select_where(User.email == form.email.data).one_or_none()
-        if user and check_password_hash(user.password_hash, form.password.data):
-            login_user(user)
+        user: User = select_where(User.email == form.email.data).one_or_none()
 
-            if user.role == 'admin':
-                flash("Welcome back, Admin!", "success")
-                return redirect(url_for('core.admin_dashboard'))
-            elif user.role == 'teacher':
-                flash("Welcome back, Teacher!", "success")
-                return redirect(url_for('core.teacher_dashboard'))
-            elif user.role == 'student':
-                flash("Welcome back, Student!", "success")
-                return redirect(url_for('core.student_dashboard'))
-            else:
-                flash("Unknown role. Please contact support.", "danger")
-                return redirect(url_for('login'))
+        if user:
             
-    return render_template('auth/login.html', form=form)
+            if user.is_temporarily_blocked():
+                flash(f"Your account is blocked until {user.blocked_until.strftime('%H:%M:%S')}.", "danger")
+                return redirect(url_for('auth.login'))
+
+            
+            if check_password_hash(user.password_hash, form.password.data):
+                user.failed_logins = 0  # Reset on success
+                db.session.commit()
+                login_user(user)
+
+                
+                if user.role == 'admin':
+                    flash("Welcome back, Admin!", "success")
+                    return redirect(url_for('core.admin_dashboard'))
+                elif user.role == 'teacher':
+                    flash("Welcome back, Teacher!", "success")
+                    return redirect(url_for('core.teacher_dashboard'))
+                elif user.role == 'student':
+                    flash("Welcome back, Student!", "success")
+                    return redirect(url_for('core.student_dashboard'))
+                else:
+                    flash("Unknown role. Please contact support.", "danger")
+                    return redirect(url_for('auth.login'))
+            else:
+                
+                user.failed_logins += 1
+                if user.failed_logins >= 3:
+                    user.blocked_until = datetime.utcnow() + timedelta(minutes=5)
+                    user.failed_logins = 0  # Optionally reset
+                    flash("Too many failed attempts. You are blocked for 5 minutes.", "danger")
+                else:
+                    flash("Invalid credentials.", "warning")
+                db.session.commit()
+                return redirect(url_for('auth.login'))
+
+        flash("User not found.", "danger")
+        return redirect(url_for('auth.login'))
+ 
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
