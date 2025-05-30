@@ -159,13 +159,34 @@ def teacher_dashboard():
 def student_dashboard():
     return render_template('student/dashboard.html')
 
-# TODO: May still benefit from refactoring
-@bp.route('/image-import-test', methods=['GET', 'POST'])
+# TODO: Refactor further for easier use
+@bp.route('/upload-profile-picture', methods=['GET', 'POST'])
 @login_required
-def image_import_test():
+def upload_profile_picture():
     form = ImageUploadForm()
     if form.validate_on_submit():
         image_upload(form, current_user)
         return redirect(url_for('core.image_import_test'))
 
-    return render_template('image_import_test.html', form=form, image=current_user.profile_picture)
+    return render_template('/upload_profile_picture.html', form=form, image=current_user.profile_picture)
+
+
+from flask import render_template, redirect, url_for, flash
+from flask_login import login_required, current_user
+import os
+
+@bp.route('/delete-profile-picture', methods=['POST'])
+@login_required
+def delete_profile_picture():
+    if current_user.profile_picture:
+        # Pašaliname nuotrauką iš serverio
+        try:
+            os.remove(os.path.join('app/static', current_user.profile_picture))
+            # Išvalome naudotojo profilio nuotrauką iš duomenų bazės
+            current_user.profile_picture = None
+            db.session.commit()
+            flash("Profile picture deleted successfully!", "success")
+        except Exception as e:
+            flash(f"Error deleting profile picture: {str(e)}", "danger")
+    
+    return redirect(url_for('core.' + current_user.role + '_dashboard'))
