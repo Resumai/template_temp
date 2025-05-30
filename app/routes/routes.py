@@ -166,14 +166,11 @@ def upload_profile_picture():
     form = ImageUploadForm()
     if form.validate_on_submit():
         image_upload(form, current_user)
-        return redirect(url_for('core.image_import_test'))
+        return redirect(url_for('core.upload_profile_picture'))
 
     return render_template('/upload_profile_picture.html', form=form, image=current_user.profile_picture)
 
 
-from flask import render_template, redirect, url_for, flash
-from flask_login import login_required, current_user
-import os
 
 @bp.route('/delete-profile-picture', methods=['POST'])
 @login_required
