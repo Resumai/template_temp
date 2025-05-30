@@ -1,0 +1,45 @@
+{% extends 'base.html' %} {% block title %}Upload Profile Picture{% endblock %}
+{% block content %}
+
+<h2>Upload Profile Picture</h2>
+
+{% if image %}
+<p>Current picture:</p>
+<img
+  src="{{ url_for('static', filename=image) }}"
+  alt="Current profile picture"
+  width="150"
+  height="150"
+  style="border-radius: 50%"
+/>
+{% else %}
+<p>No profile picture uploaded yet.</p>
+{% endif %}
+<!-- Mygtukai per vidurį -->
+<div class="button-container">
+  <!-- Delete Profile Picture Button -->
+  <form method="POST" action="{{ url_for('core.delete_profile_picture') }}">
+    {{ form.hidden_tag() }}
+    <button type="submit" class="btn btn-danger">Delete Profile Picture</button>
+  </form>
+
+  <!-- Upload Form -->
+  <form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.image.label }}<br />
+      {{ form.image() }}
+    </div>
+    <button type="submit" class="btn btn-success">Upload</button>
+  </form>
+</div>
+
+<!-- Back to Dashboard -->
+<a
+  href="{{ url_for('core.' + current_user.role + '_dashboard') }}"
+  class="btn btn-success back-to-dashboard"
+>
+  Back to Dashboard
+</a>
+
+{% endblock %}
