@@ -6,6 +6,12 @@ from app import select_where
 from app.utils.group_utils import get_or_create_group
 from app.utils.auth_utils import roles_required
 
+# New imports
+from app.forms.forms import ImageUploadForm  
+from werkzeug.utils import secure_filename
+import os
+
+
 
 ### Blueprint Registration ###
 bp = Blueprint('core', __name__)
@@ -137,11 +143,6 @@ def index():
 def user_menu():
     return render_template('user_menu.html')
 
-@bp.route('/image-import-test')
-def image_import_test():
-    return render_template('image_import_test.html')
-
-
 @bp.route('/admin-dashboard')
 @roles_required('admin')
 def admin_dashboard():
@@ -156,3 +157,24 @@ def teacher_dashboard():
 @roles_required('student')
 def student_dashboard():
     return render_template('student/dashboard.html')
+
+# TODO: Refactor further for easier use
+@bp.route('/image-import-test', methods=['GET', 'POST'])
+@login_required
+def image_import_test():
+    form = ImageUploadForm()
+    if form.validate_on_submit():
+        image = form.image.data
+        filename = form.generate_filename()
+        relative_path = f"uploads/{filename}" 
+
+        # Translates to app/static/uploads/{filename}
+        full_path = os.path.join('app/static', relative_path) 
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
+        image.save(full_path)
+
+        current_user.profile_picture = relative_path
+        db.session.commit()
+        return redirect(url_for('core.image_import_test'))
+
+    return render_template('image_import_test.html', form=form, image=current_user.profile_picture)
