@@ -14,6 +14,7 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False) # 'student', 'teacher', 'admin'
     profile_picture = db.Column(db.String(200))
+    block_reason = db.Column(db.String(200), nullable=True)
 
     program_id = db.Column(db.Integer, db.ForeignKey('study_program.id', ondelete='SET NULL'), nullable=True)
     group_id = db.Column(db.Integer, db.ForeignKey('student_group.id', ondelete='SET NULL'), nullable=True)
