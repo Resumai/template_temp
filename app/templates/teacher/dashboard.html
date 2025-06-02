@@ -1,7 +1,28 @@
 {% extends 'base.html' %} {% block title %} Teacher Dashboard {% endblock %} {%
 block content %}
-<div class="container teacher-dashboard mt-4">
-  <h2 class="text-warning mb-4">👋 Welcome, Teacher Name</h2>
+<div class=" teacher-dashboard mt-4">
+  <h2 class="text-warning mb-4"><h2 class="text-primary mb-4 d-flex align-items-center">
+    {% if current_user.profile_picture %}
+    <a href="{{ url_for('core.upload_profile_picture') }}">
+      <img
+        src="{{ url_for('static', filename=current_user.profile_picture) }}"
+        alt="Profile Picture"
+        class="profile-img mx-auto d-block"
+        title="Click to change profile picture"
+      />
+    </a>
+    {% else %}
+    <a
+      href="{{ url_for('core.upload_profile_picture') }}"
+      class="add-profile-picture-link d-block text-center text-decoration-none"
+    >
+      <div class="add-profile-picture-box mx-auto">
+        <span class="plus-icon">+</span>
+      </div>
+    </a>
+
+    {% endif %} Welcome, {{ current_user.name }}
+  </h2>
 
   <!-- Academic Information -->
   <div class="card mb-4">

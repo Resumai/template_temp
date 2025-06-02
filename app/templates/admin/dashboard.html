@@ -1,10 +1,110 @@
-{% extends 'base.html' %} {% block title %}Admin Dashboard{% endblock %} {%
+{% extends "base.html" %} {% block title %}Admin Dashboard{% endblock %} {%
 block content %}
-<h2>Admin Dashboard</h2>
-<ul>
-  <li><a href="{{ url_for('car.car_list') }}">Manage Cars</a></li>
-  <li><a href="{{ url_for('core.index') }}">Home</a></li>
-  <li><a href="{{ url_for('info.contact_us') }}">Contact Users</a></li>
-  <li><a href="#">Manage Users / Programs</a></li>
-</ul>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="mt-5">
+      <h2 class="text-center mb-4">Administrator Panel</h2>
+
+      <div class="row g-4">
+        <!-- User Management -->
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">User Management</h5>
+              <p class="card-text">
+                Manage student, lecturer, and administrator accounts.
+              </p>
+              <button class="btn btn-primary">Open</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module Management -->
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Module Management</h5>
+              <p class="card-text">
+                Add, edit, and assign modules to lecturers and study programs.
+              </p>
+              <button class="btn btn-primary">Open</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Study Programs -->
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Study Programs</h5>
+              <p class="card-text">
+                Create and edit study programs and assign relevant modules.
+              </p>
+              <button class="btn btn-primary">Open</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group Management -->
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Group Management</h5>
+              <p class="card-text">
+                Assign students to groups and manage group-related data.
+              </p>
+              <button class="btn btn-primary">Open</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-5" />
+
+      <!-- Relationships -->
+      <h4 class="mb-3">
+        Module Relationships with Lecturers and Study Programs
+      </h4>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Module</th>
+              <th>Lecturer</th>
+              <th>Study Program</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Database Systems</td>
+              <td>Dr. Smith</td>
+              <td>Computer Science</td>
+              <td>
+                <button class="btn btn-sm btn-warning">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Algorithms</td>
+              <td>Prof. Johnson</td>
+              <td>Software Engineering</td>
+              <td>
+                <button class="btn btn-sm btn-warning">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+            <!-- Add more sample rows as needed -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
 {% endblock %}
