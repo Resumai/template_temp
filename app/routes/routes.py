@@ -34,7 +34,7 @@ def login():
             if user.is_temporarily_blocked():
                 reason = user.block_reason or "your account is temporarily blocked"
                 flash(f"{reason} until {user.blocked_until.strftime('%H:%M:%S')}.", "danger")
-                return redirect(url_for('auth.login'))
+                return render_template('auth/login.html', form=form)
 
             
             if check_password_hash(user.password_hash, form.password.data):
@@ -55,7 +55,7 @@ def login():
                     return redirect(url_for('core.student_dashboard'))
                 else:
                     flash("Unknown role. Please contact support.", "danger")
-                    return redirect(url_for('auth.login'))
+                    return render_template('auth/login.html', form=form)
             else:
                 
                 user.failed_logins += 1
@@ -66,10 +66,11 @@ def login():
                 else:
                     flash("Invalid credentials.", "warning")
                 db.session.commit()
-                return redirect(url_for('auth.login'))
+                return render_template('auth/login.html', form=form)
 
         flash("User not found.", "danger")
-        return redirect(url_for('auth.login'))
+        return render_template('auth/login.html', form=form)
+    return render_template('auth/login.html', form=form)
  
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -95,7 +96,7 @@ def register():
 
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for('auth.login'))
+        return render_template('auth/login.html', form=form)
 
     return render_template('auth/register.html', form=form)
 
@@ -103,7 +104,7 @@ def register():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('auth.login'))
+    return render_template('auth/login.html')
 
 
 ### Car related routes ###
