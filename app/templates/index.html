@@ -1,21 +1,26 @@
 {% extends 'base.html' %} {% block title %}Welcome - University{% endblock %} {%
 block content %}
 
+<!-- Hero Section -->
 <div class="hero">
-  <div class="hero-inner">
-    <h1 class="hero-title">University Platform</h1>
+  <div class="hero-inner text-center">
+    <h1 class="hero-title">University Program</h1>
     <p class="hero-subtitle">
       Your centralized system for managing academic life – for students,
       lecturers, and admins.
     </p>
-    <a href="{{ url_for('auth.login') }}" class="btn btn-hero">Login</a>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-light btn-lg px-5"
+      >Login</a
+    >
   </div>
 </div>
+
+<!-- Features Section -->
 <section class="features">
   <div class="feature">
     <h3>Student Portal</h3>
     <p>
-      Access your study materials, schedules, and academic progress in one
+      Access your study materials, schedules, and academic progress all in one
       place.
     </p>
   </div>
@@ -27,10 +32,13 @@ block content %}
   </div>
 </section>
 
+<!-- Call To Action -->
 <section class="cta">
   <h2>Need Help?</h2>
   <p>We’re here to support students and staff. Contact us for any questions.</p>
-  <a href="{{ url_for('info.contact_us') }}" class="btn">Contact Us</a>
+  <a href="{{ url_for('info.contact_us') }}" class="btn btn-primary"
+    >Contact Us</a
+  >
 </section>
 
 {% endblock %}
