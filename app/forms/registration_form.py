@@ -52,13 +52,6 @@ class RegistrationForm(FlaskForm):
         }
     )
 
-    role = SelectField(
-        'Role',
-        choices=[('student', 'Student'), ('teacher', 'Teacher')],
-        validators=[DataRequired()],
-        render_kw={"class": "form-select"}
-    )
-
     program = SelectField(
         'Study Program',
         choices=[],  # bus užpildyta view funkcijoje
