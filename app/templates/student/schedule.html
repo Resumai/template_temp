@@ -1,0 +1,17 @@
+<h2>{{ current_user.name }}'s Weekly Schedule</h2>
+<table border="1">
+  <tr>
+    <th>Day</th>
+    <th>Module</th>
+    <th>Time</th>
+    <th>Teacher</th>
+  </tr>
+  {% for mod in modules %}
+  <tr>
+    <td>{{ mod.day_of_week }}</td>
+    <td>{{ mod.name }}</td>
+    <td>{{ mod.start_time.strftime('%H:%M') }} - {{ mod.end_time.strftime('%H:%M') }}</td>
+    <td>{{ mod.teacher.name if mod.teacher else "TBA" }}</td>
+  </tr>
+  {% endfor %}
+</table>

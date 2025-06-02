@@ -173,31 +173,4 @@ def generate_mock_data():
         )
         db.session.add(enrollment2)
 
-        # --- Additional Students ---
-    for i in range(10):
-        email = f"student{i+3}@mail.com"
-        if not User.query.filter_by(email=email).first():
-            student = User(
-                name=f"Student {i}",
-                email=email,
-                password_hash=generate_password_hash("password"),
-                role="student",
-                program=prog if i % 2 == 0 else prog2,
-                group=group if i % 2 == 0 else group2
-            )
-            db.session.add(student)
-
-    # --- Additional Teachers ---
-    for i in range(3):
-        email = f"teacher{i+3}@mail.com"
-        if not User.query.filter_by(email=email).first():
-            teacher = User(
-                name=f"Teacher {i}",
-                email=email,
-                password_hash=generate_password_hash("password"),
-                role="teacher",
-                program=prog if i % 2 == 0 else prog2
-            )
-            db.session.add(teacher)
-
     db.session.commit()

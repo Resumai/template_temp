@@ -3,7 +3,7 @@ from app.models.study_program import StudyProgram, Faculty
 from app.models.module import Module, Assessment
 from app.models.enrollment import Enrollment
 from flask_bcrypt import generate_password_hash
-from datetime import datetime, time # Import time for new schedule fields
+from datetime import datetime
 from app import db
 
 
@@ -215,24 +215,24 @@ def generate_mock_data():
 
     modules_to_add = [
         # Teacher 1 (Bob Teacher)
-        {"name": "Algorithms and Data Structures", "description": "Core computer science fundamentals.", "credits": 6, "semester": "autumn", "day_of_week": "Monday", "start_time": time(10, 0), "end_time": time(12, 0), "program": prog, "teacher": teacher},
-        {"name": "Advanced Networking", "description": "Deep dive into network protocols and design.", "credits": 6, "semester": "spring", "day_of_week": "Monday", "start_time": time(14, 0), "end_time": time(16, 0), "program": prog, "teacher": teacher},
+        {"name": "Algorithms and Data Structures", "description": "Core computer science fundamentals.", "credits": 6, "semester": "rudens", "schedule": "Mon 10:00-12:00", "program": prog, "teacher": teacher},
+        {"name": "Advanced Networking", "description": "Deep dive into network protocols and design.", "credits": 6, "semester": "pavasario", "schedule": "Mon 14:00-16:00", "program": prog, "teacher": teacher},
 
         # Teacher 2 (Dana Teacher)
-        {"name": "Databases and SQL", "description": "Relational database theory and hands-on SQL.", "credits": 6, "semester": "spring", "day_of_week": "Tuesday", "start_time": time(14, 0), "end_time": time(16, 0), "program": prog2, "teacher": teacher2},
-        {"name": "Cloud Computing", "description": "Introduction to cloud platforms and services.", "credits": 5, "semester": "autumn", "day_of_week": "Tuesday", "start_time": time(10, 0), "end_time": time(12, 0), "program": prog2, "teacher": teacher2},
+        {"name": "Databases and SQL", "description": "Relational database theory and hands-on SQL.", "credits": 6, "semester": "pavasario", "schedule": "Tue 14:00-16:00", "program": prog2, "teacher": teacher2},
+        {"name": "Cloud Computing", "description": "Introduction to cloud platforms and services.", "credits": 5, "semester": "rudens", "schedule": "Tue 10:00-12:00", "program": prog2, "teacher": teacher2},
 
         # Teacher 3 (Eve Professor)
-        {"name": "Object-Oriented Programming", "description": "Principles and practices of OOP.", "credits": 6, "semester": "autumn", "day_of_week": "Wednesday", "start_time": time(11, 0), "end_time": time(13, 0), "program": prog, "teacher": teacher3},
-        {"name": "Software Testing", "description": "Methodologies and tools for software quality assurance.", "credits": 5, "semester": "spring", "day_of_week": "Wednesday", "start_time": time(9, 0), "end_time": time(11, 0), "program": prog, "teacher": teacher3},
+        {"name": "Object-Oriented Programming", "description": "Principles and practices of OOP.", "credits": 6, "semester": "rudens", "schedule": "Wed 11:00-13:00", "program": prog, "teacher": teacher3},
+        {"name": "Software Testing", "description": "Methodologies and tools for software quality assurance.", "credits": 5, "semester": "pavasario", "schedule": "Wed 09:00-11:00", "program": prog, "teacher": teacher3},
 
         # Teacher 4 (Frank Instructor)
-        {"name": "Operating Systems", "description": "Concepts of modern operating systems.", "credits": 5, "semester": "spring", "day_of_week": "Thursday", "start_time": time(9, 0), "end_time": time(11, 0), "program": prog2, "teacher": teacher4},
-        {"name": "Computer Graphics", "description": "Fundamentals of rendering and animation.", "credits": 6, "semester": "autumn", "day_of_week": "Thursday", "start_time": time(13, 0), "end_time": time(15, 0), "program": prog2, "teacher": teacher4},
+        {"name": "Operating Systems", "description": "Concepts of modern operating systems.", "credits": 5, "semester": "pavasario", "schedule": "Thu 09:00-11:00", "program": prog2, "teacher": teacher4},
+        {"name": "Computer Graphics", "description": "Fundamentals of rendering and animation.", "credits": 6, "semester": "rudens", "schedule": "Thu 13:00-15:00", "program": prog2, "teacher": teacher4},
 
         # Teacher 5 (Hannah Lecturer)
-        {"name": "Machine Learning Fundamentals", "description": "Introduction to ML algorithms and applications.", "credits": 7, "semester": "autumn", "day_of_week": "Friday", "start_time": time(14, 0), "end_time": time(16, 0), "program": prog, "teacher": teacher5},
-        {"name": "Artificial Intelligence", "description": "Core concepts and techniques of AI.", "credits": 7, "semester": "spring", "day_of_week": "Friday", "start_time": time(10, 0), "end_time": time(12, 0), "program": prog, "teacher": teacher5},
+        {"name": "Machine Learning Fundamentals", "description": "Introduction to ML algorithms and applications.", "credits": 7, "semester": "rudens", "schedule": "Fri 14:00-16:00", "program": prog, "teacher": teacher5},
+        {"name": "Artificial Intelligence", "description": "Core concepts and techniques of AI.", "credits": 7, "semester": "pavasario", "schedule": "Fri 10:00-12:00", "program": prog, "teacher": teacher5},
     ]
 
     # Add or update modules
@@ -244,9 +244,7 @@ def generate_mock_data():
                 description=m_data["description"],
                 credits=m_data["credits"],
                 semester=m_data["semester"],
-                day_of_week=m_data["day_of_week"],
-                start_time=m_data["start_time"],
-                end_time=m_data["end_time"],
+                schedule=m_data["schedule"],
                 program=m_data["program"],
                 teacher=m_data["teacher"]
             )
@@ -255,9 +253,7 @@ def generate_mock_data():
             mod_obj.description = m_data["description"]
             mod_obj.credits = m_data["credits"]
             mod_obj.semester = m_data["semester"]
-            mod_obj.day_of_week = m_data["day_of_week"]
-            mod_obj.start_time = m_data["start_time"]
-            mod_obj.end_time = m_data["end_time"]
+            mod_obj.schedule = m_data["schedule"]
             mod_obj.program = m_data["program"]
             mod_obj.teacher = m_data["teacher"]
     db.session.commit()

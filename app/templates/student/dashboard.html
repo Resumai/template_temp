@@ -1,88 +1,113 @@
-{% extends 'base.html' %} {% block title %} Student Dashboard {% endblock %} {%
+{% extends 'base.html' %} {% block title %}Student Dashboard{% endblock %} {%
 block content %}
-<div class="container student-dashboard mt-4">
-  <h2 class="text-primary mb-4 d-flex align-items-center">
+<div class="student-dashboard mt-5">
+  <div class="d-flex align-items-center mb-4">
     {% if current_user.profile_picture %}
     <a href="{{ url_for('core.upload_profile_picture') }}">
       <img
         src="{{ url_for('static', filename=current_user.profile_picture) }}"
         alt="Profile Picture"
-        class="profile-img mx-auto d-block"
+        class="profile-img"
         title="Click to change profile picture"
       />
     </a>
     {% else %}
     <a
       href="{{ url_for('core.upload_profile_picture') }}"
-      class="add-profile-picture-link d-block text-center text-decoration-none"
+      class="add-profile-picture-link"
     >
-      <div class="add-profile-picture-box mx-auto">
+      <div class="add-profile-picture-box">
         <span class="plus-icon">+</span>
       </div>
     </a>
-
-    {% endif %} Welcome, {{ current_user.name }}
-  </h2>
-  <!-- Academic Information -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title text-success">📘 Academic Information</h5>
-      <p><strong>Email:</strong> {{ current_user.email }}</p>
-      <p><strong>Program:</strong> {{ current_user.program.name }}</p>
-      <p><strong>Group:</strong> {{ current_user.group.name }}</p>
-    </div>
+    {% endif %}
+    <h2 class="ms-3 text-primary mb-0">Welcome, {{ current_user.name }}</h2>
   </div>
 
-  <!-- Assigned Modules -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title text-success">📚 Assigned Modules</h5>
-      {% if modules %}
-      <ul class="list-group">
-        {% for module in modules %}
-        <li class="list-group-item">
-          <strong>{{ module.name }}</strong> ({{ module.code }})
-          <br />
-          <small>Teacher: {{ module.teacher.name }}</small>
-        </li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <p>No modules assigned.</p>
-      {% endif %}
+  <div class="row g-4">
+    <!-- Academic Info -->
+    <div class="col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-success">📘 Academic Info</h5>
+          <p><strong>Email:</strong> {{ current_user.email }}</p>
+          <p><strong>Program:</strong> {{ current_user.program.name }}</p>
+          <p><strong>Group:</strong> {{ current_user.group.name }}</p>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <!-- Schedule -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title text-success">🗓️ Schedule</h5>
-      {% if schedule %}
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Type</th>
-            <th>Module</th>
-            <th>Location</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in schedule %}
-          <tr>
-            <td>{{ item.date.strftime('%Y-%m-%d') }}</td>
-            <td>{{ item.time }}</td>
-            <td>{{ item.type }}</td>
-            <td>{{ item.module.name }}</td>
-            <td>{{ item.location }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <p>The schedule is not yet available.</p>
-      {% endif %}
+    <!-- Modules -->
+    <div class="col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-success">📚 Modules</h5>
+          {% if modules %}
+          <ul class="list-group">
+            {% for module in modules %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <div>
+                <strong>{{ module.name }}</strong> ({{ module.code }})<br />
+                <small>Teacher: {{ module.teacher.name }}</small>
+              </div>
+              <form
+                method="POST"
+                action="{{ url_for('core.delete_module', module_id=module.id) }}"
+              >
+                <button type="submit" class="btn btn-sm btn-danger ms-2">
+                  Delete
+                </button>
+              </form>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p>No modules enrolled yet. You can add modules below.</p>
+          {% endif %}
+          <a
+            href="{{ url_for('core.add_module') }}"
+            class="btn btn-primary mt-3"
+            >Add Module</a
+          >
+        </div>
+      </div>
+    </div>
+    <!-- Schedule -->
+    <div class="col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-success">🗓️ Schedule</h5>
+          {% if schedule %}
+          <div class="table-responsive">
+            <table class="table table-sm table-striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Type</th>
+                  <th>Module</th>
+                  <th>Location</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in schedule %}
+                <tr>
+                  <td>{{ item.date.strftime('%Y-%m-%d') }}</td>
+                  <td>{{ item.time }}</td>
+                  <td>{{ item.type }}</td>
+                  <td>{{ item.module.name }}</td>
+                  <td>{{ item.location }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p>The schedule is not yet available.</p>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
 </div>

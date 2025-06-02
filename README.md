@@ -21,13 +21,13 @@ Create a complex university management system that includes:
 - [x] 🧪 Assign student group based on selected program
 - [x] Validate email and password using regex
 - [ ] Upload profile picture (file type & size validation)
-  - [ ] Basic file upload functionality
-  - [ ] Validate file type (e.g., .png, .jpg, .jpeg)
+  - [x] Basic file upload functionality
+  - [x] Validate file type (e.g., .png, .jpg, .jpeg)
   - [ ] Validate file size (e.g., max 5MB)
-- [ ] Save image reference in DB and store image in a dedicated folder
+- [x] Save image reference in DB and store image in a dedicated folder
 
 ### 2.2 Login
-- [ ] Temporary block after 3 failed login attempts
+- [x] Temporary block after 3 failed login attempts
 
 ### 2.3 Roles and Permissions
 - [ ] **Students**:
