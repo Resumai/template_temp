@@ -6,6 +6,7 @@ __pycache__/
 .venv/
 app/forms/test_forms.py
 app/forms/test_form.py
+folder_structure.txt
 # Logs
 *.log
 
