@@ -36,6 +36,7 @@ block content %}
         </div>
       </div>
     </div>
+
     <!-- Modules -->
     <div class="col-lg-4">
       <div class="card h-100 shadow-sm">
@@ -73,38 +74,41 @@ block content %}
         </div>
       </div>
     </div>
+
     <!-- Schedule -->
     <div class="col-lg-4">
       <div class="card h-100 shadow-sm">
         <div class="card-body">
           <h5 class="card-title text-success">🗓️ Schedule</h5>
+
           {% if schedule %}
           <div class="table-responsive">
             <table class="table table-sm table-striped">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Type</th>
+                  <th>Day</th>
                   <th>Module</th>
-                  <th>Location</th>
+                  <th>Time</th>
+                  <th>Teacher</th>
                 </tr>
               </thead>
               <tbody>
-                {% for item in schedule %}
+                {% for mod in schedule %}
                 <tr>
-                  <td>{{ item.date.strftime('%Y-%m-%d') }}</td>
-                  <td>{{ item.time }}</td>
-                  <td>{{ item.type }}</td>
-                  <td>{{ item.module.name }}</td>
-                  <td>{{ item.location }}</td>
+                  <td>{{ mod.day_of_week }}</td>
+                  <td>{{ mod.module.name }}</td>
+                  <td>
+                    {{ mod.start_time.strftime('%H:%M') }} - {{
+                    mod.end_time.strftime('%H:%M') }}
+                  </td>
+                  <td>{{ mod.teacher.name if mod.teacher else "TBA" }}</td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
           {% else %}
-          <p>The schedule is not yet available.</p>
+          <p>No schedule available.</p>
           {% endif %}
         </div>
       </div>

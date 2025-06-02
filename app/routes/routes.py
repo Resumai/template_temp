@@ -8,6 +8,7 @@ from app.utils.auth_utils import roles_required
 from app.utils.utils import image_upload, delete_photo
 from datetime import datetime, timedelta
 
+
 # New imports
 from app.forms.forms import ImageUploadForm  
 
@@ -176,7 +177,7 @@ def teacher_dashboard():
 @bp.route('/student-dashboard')
 @roles_required('student')
 def student_dashboard():
-    """Display student's dashboard with modules"""
+    """Display student's dashboard with modules and schedule"""
     try:
         # Get the modules the student is enrolled in
         student_modules = Enrollment.query.filter_by(student_id=current_user.id).all()
@@ -185,21 +186,30 @@ def student_dashboard():
         if not modules:
             flash("You are not enrolled in any modules. You can add modules below.", "warning")
 
+        # Create a schedule based on the enrolled modules (assuming modules have time information)
+        schedule = []
+        for module in modules:
+            # Assuming 'day_of_week', 'start_time', 'end_time' are in 'Module' and 'teacher' is related
+            schedule.append({
+                'day_of_week': module.day_of_week,
+                'module': module,
+                'start_time': module.start_time,
+                'end_time': module.end_time,
+                'teacher': module.teacher if module.teacher else None
+            })
+
+        # Pass the modules and schedule to the template
         return render_template(
             'student/dashboard.html', 
-            modules=modules
+            modules=modules,
+            schedule=schedule
         )
 
     except Exception as e:
         flash(f"Error loading dashboard: {str(e)}", "danger")
         print(f"Error loading dashboard: {str(e)}") 
         return redirect(url_for('core.index'))
-
-    except Exception as e:
-        flash(f"Error loading dashboard: {str(e)}", "danger")
-        print(f"Error loading dashboard: {str(e)}") 
-        return redirect(url_for('core.index'))
-
+ 
 @bp.route('/upload-profile-picture', methods=['GET', 'POST'])
 @login_required
 def upload_profile_picture():
@@ -298,11 +308,4 @@ def delete_module(module_id):
         return redirect(url_for('core.student_dashboard'))
 
 
-@bp.route("/schedule")
-@login_required
-def student_schedule():
-    """ Display student's schedule """
-    modules = [e.module for e in current_user.enrollments]
-    # Optional: sort by weekday and time
-    modules.sort(key=lambda m: (m.day_of_week, m.start_time))
-    return render_template("student/schedule.html", modules=modules)
+
