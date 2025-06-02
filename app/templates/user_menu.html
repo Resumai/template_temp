@@ -1,9 +1,7 @@
-<<<<<<< HEAD:templates/user_meniu.html
 {% extends 'base.html' %} {% block title %}User Menu - University{% endblock %}
 {% block content %}
 <div class="container" style="max-width: 600px; margin-top: 2rem">
   <h2>Welcome, {{ current_user.name }}!</h2>
-=======
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -30,7 +28,6 @@
         </ul>
       </nav>
     </header>
->>>>>>> dev:app/templates/user_menu.html
 
   <div class="list-group mt-4">
     <a
@@ -40,7 +37,6 @@
       Your Cars
     </a>
 
-<<<<<<< HEAD:templates/user_meniu.html
     {% if current_user.role == 'admin' %}
     <a
       href="{{ url_for('admin.index') }}"
@@ -66,7 +62,6 @@
   </div>
 </div>
 {% endblock %}
-=======
     <footer>
       &copy; {{ current_year or '2025' }} University. All rights reserved.
       <a href="{{ url_for('info.privacy') }}">Privacy Policy</a> |
@@ -75,4 +70,3 @@
     </footer>
   </body>
 </html>
->>>>>>> dev:app/templates/user_menu.html
