@@ -1,25 +1,16 @@
 from flask import render_template, redirect, url_for, flash, Blueprint
 from flask_login import login_user, login_required, logout_user, current_user
-from app import db, User, Car, LoginForm, CarForm, ContactForm, RegistrationForm, StudentGroup, StudyProgram
+from app import db, User, Car, LoginForm, CarForm, ContactForm, RegistrationForm, StudentGroup, StudyProgram, Module, Assessment, Enrollment
 from flask_bcrypt import check_password_hash, generate_password_hash
 from app.utils.curd_utils import select_where
 from app.utils.group_utils import get_or_create_group
 from app.utils.auth_utils import roles_required
-from app.utils.utils import image_upload
-from datetime import datetime
-from flask import render_template, redirect, url_for, flash, Blueprint, request, jsonify
-from flask_login import login_required, current_user
-from app.models.user import User
-from app.models.module import Module, Assessment
-from app.models.enrollment import Enrollment
-from app.models.study_program import StudyProgram
-from app.utils.auth_utils import roles_required
+from app.utils.utils import image_upload, delete_photo
 from datetime import datetime
 
 # New imports
 from app.forms.forms import ImageUploadForm  
-from werkzeug.utils import secure_filename
-import os
+
 
 
 ### Blueprint Registration ###
@@ -200,16 +191,7 @@ def upload_profile_picture():
 @login_required
 def delete_profile_picture():
     if current_user.profile_picture:
-        # Remove the picture from the server
-        try:
-            os.remove(os.path.join('app/static', current_user.profile_picture))
-            # Clear the user's profile picture from the database
-            current_user.profile_picture = None
-            db.session.commit()
-            flash("Profile picture deleted successfully!", "success")
-        except Exception as e:
-            flash(f"Error deleting profile picture: {str(e)}", "danger")
-    
+        delete_photo(current_user)
     return redirect(url_for('core.' + current_user.role + '_dashboard'))
 
 
