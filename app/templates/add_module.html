@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block title %}Add Module{% endblock %} {% block
+content %}
+<div class="add-module-container">
+  <h2 class="text-primary mb-4">Add a Module</h2>
+
+  <form method="POST">
+    <div class="add-module-container">
+      <label for="module_id">Select Module:</label>
+      <select name="module_id" id="module_id" class="form-control">
+        {% for module in available_modules %}
+        <option value="{{ module.id }}">{{ module.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn" style="display: block; margin: 10px auto">
+      Add Module
+    </button>
+  </form>
+
+  <a href="{{ url_for('core.student_dashboard') }}" class="btn"
+    >Back to Dashboard</a
+  >
+  {% endblock %}
+</div>
