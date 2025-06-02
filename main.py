@@ -2,7 +2,6 @@ from flask import Flask
 from flask_login import LoginManager
 from app import db, User, create_admin_user, generate_mock_data
 from app.routes.routes import bp, car_bp, auth_bp, info_bp
-# from app.utils.mock_gen2 import generate_extended_mock_data
 
 ### FLASK SET-UP ###
 app = Flask(
@@ -45,6 +44,5 @@ if __name__ == '__main__':
 
         # Mock data generation execution
         generate_mock_data()
-        # generate_extended_mock_data()
 
     app.run(debug=True)
