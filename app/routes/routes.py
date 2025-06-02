@@ -6,7 +6,7 @@ from app.utils.curd_utils import select_where
 from app.utils.group_utils import get_or_create_group
 from app.utils.auth_utils import roles_required
 from app.utils.utils import image_upload, delete_photo
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # New imports
 from app.forms.forms import ImageUploadForm  
@@ -27,7 +27,15 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user : User = select_where(User.email == form.email.data).one_or_none()
-        if user and check_password_hash(user.password_hash, form.password.data):
+        if user.is_temporarily_blocked():
+            reason = user.block_reason or "your account is temporarily blocked"
+            flash(f"{reason} until {user.blocked_until.strftime('%H:%M:%S')}.", "danger")
+            return render_template('auth/login.html', form=form)
+
+        elif user and check_password_hash(user.password_hash, form.password.data):
+            user.failed_logins = 0  # Reset on success
+            user.block_reason = None
+            db.session.commit()
             login_user(user)
 
             if user.role == 'admin':
@@ -41,8 +49,19 @@ def login():
                 return redirect(url_for('core.student_dashboard'))
             else:
                 flash("Unknown role. Please contact support.", "danger")
-                return redirect(url_for('login'))
-            
+                return redirect(url_for('login'))     
+        else:
+            user.failed_logins += 1
+            if user.failed_logins >= 3:
+                user.blocked_until = datetime.utcnow() + timedelta(minutes=5)
+                user.failed_logins = 0  # Optionally reset
+                flash("Too many failed attempts. You are blocked for 5 minutes.", "danger")
+            else:
+                flash("Invalid credentials.", "warning")
+            db.session.commit()
+            return render_template('auth/login.html', form=form)
+
+    flash("User not found.", "danger")
     return render_template('auth/login.html', form=form)
 
 @auth_bp.route('/register', methods=['GET', 'POST'])

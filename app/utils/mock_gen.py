@@ -204,121 +204,101 @@ def generate_mock_data():
     db.session.commit()
 
 
-    # --- Module (5 total, one per teacher) ---
-    # Existing Module 1
-    mod = Module.query.filter_by(name="Algorithms and Data Structures").first()
-    if not mod:
-        mod = Module(
-            name="Algorithms and Data Structures",
-            description="Core computer science fundamentals.",
-            credits=6,
-            semester="rudens",
-            schedule="Mon 10:00-12:00",
-            program=prog,
-            teacher=teacher
-        )
-        db.session.add(mod)
-    elif mod.teacher != teacher or mod.program != prog:
-        mod.teacher = teacher
-        mod.program = prog
+    # --- Module (10 total, 2 per teacher) ---
+    # Fetch teachers to assign modules
+    teacher = User.query.filter_by(email="teacher@mail.com").first()
+    teacher2 = User.query.filter_by(email="teacher2@mail.com").first()
+    teacher3 = User.query.filter_by(email="eve@mail.com").first()
+    teacher4 = User.query.filter_by(email="frank.instructor@mail.com").first()
+    teacher5 = User.query.filter_by(email="hannah.lecturer@mail.com").first()
+
+
+    modules_to_add = [
+        # Teacher 1 (Bob Teacher)
+        {"name": "Algorithms and Data Structures", "description": "Core computer science fundamentals.", "credits": 6, "semester": "rudens", "schedule": "Mon 10:00-12:00", "program": prog, "teacher": teacher},
+        {"name": "Advanced Networking", "description": "Deep dive into network protocols and design.", "credits": 6, "semester": "pavasario", "schedule": "Mon 14:00-16:00", "program": prog, "teacher": teacher},
+
+        # Teacher 2 (Dana Teacher)
+        {"name": "Databases and SQL", "description": "Relational database theory and hands-on SQL.", "credits": 6, "semester": "pavasario", "schedule": "Tue 14:00-16:00", "program": prog2, "teacher": teacher2},
+        {"name": "Cloud Computing", "description": "Introduction to cloud platforms and services.", "credits": 5, "semester": "rudens", "schedule": "Tue 10:00-12:00", "program": prog2, "teacher": teacher2},
+
+        # Teacher 3 (Eve Professor)
+        {"name": "Object-Oriented Programming", "description": "Principles and practices of OOP.", "credits": 6, "semester": "rudens", "schedule": "Wed 11:00-13:00", "program": prog, "teacher": teacher3},
+        {"name": "Software Testing", "description": "Methodologies and tools for software quality assurance.", "credits": 5, "semester": "pavasario", "schedule": "Wed 09:00-11:00", "program": prog, "teacher": teacher3},
+
+        # Teacher 4 (Frank Instructor)
+        {"name": "Operating Systems", "description": "Concepts of modern operating systems.", "credits": 5, "semester": "pavasario", "schedule": "Thu 09:00-11:00", "program": prog2, "teacher": teacher4},
+        {"name": "Computer Graphics", "description": "Fundamentals of rendering and animation.", "credits": 6, "semester": "rudens", "schedule": "Thu 13:00-15:00", "program": prog2, "teacher": teacher4},
+
+        # Teacher 5 (Hannah Lecturer)
+        {"name": "Machine Learning Fundamentals", "description": "Introduction to ML algorithms and applications.", "credits": 7, "semester": "rudens", "schedule": "Fri 14:00-16:00", "program": prog, "teacher": teacher5},
+        {"name": "Artificial Intelligence", "description": "Core concepts and techniques of AI.", "credits": 7, "semester": "pavasario", "schedule": "Fri 10:00-12:00", "program": prog, "teacher": teacher5},
+    ]
+
+    # Add or update modules
+    for m_data in modules_to_add:
+        mod_obj = Module.query.filter_by(name=m_data["name"]).first()
+        if not mod_obj:
+            mod_obj = Module(
+                name=m_data["name"],
+                description=m_data["description"],
+                credits=m_data["credits"],
+                semester=m_data["semester"],
+                schedule=m_data["schedule"],
+                program=m_data["program"],
+                teacher=m_data["teacher"]
+            )
+            db.session.add(mod_obj)
+        else: # Update existing module's properties if needed
+            mod_obj.description = m_data["description"]
+            mod_obj.credits = m_data["credits"]
+            mod_obj.semester = m_data["semester"]
+            mod_obj.schedule = m_data["schedule"]
+            mod_obj.program = m_data["program"]
+            mod_obj.teacher = m_data["teacher"]
     db.session.commit()
 
-    # Existing Module 2
-    mod2 = Module.query.filter_by(name="Databases and SQL").first()
-    if not mod2:
-        mod2 = Module(
-            name="Databases and SQL",
-            description="Relational database theory and hands-on SQL.",
-            credits=6,
-            semester="pavasario",
-            schedule="Tue 14:00-16:00",
-            program=prog2,
-            teacher=teacher2
-        )
-        db.session.add(mod2)
-    elif mod2.teacher != teacher2 or mod2.program != prog2:
-        mod2.teacher = teacher2
-        mod2.program = prog2
-    db.session.commit()
-
-    # New Module 3 (for teacher3)
-    mod5 = Module.query.filter_by(name="Object-Oriented Programming").first()
-    if not mod5:
-        mod5 = Module(
-            name="Object-Oriented Programming",
-            description="Principles and practices of OOP.",
-            credits=6,
-            semester="rudens",
-            schedule="Wed 11:00-13:00",
-            program=prog,
-            teacher=teacher3
-        )
-        db.session.add(mod5)
-    elif mod5.teacher != teacher3 or mod5.program != prog:
-        mod5.teacher = teacher3
-        mod5.program = prog
-    db.session.commit()
-
-    # New Module 4 (for teacher4)
-    mod6 = Module.query.filter_by(name="Operating Systems").first()
-    if not mod6:
-        mod6 = Module(
-            name="Operating Systems",
-            description="Concepts of modern operating systems.",
-            credits=5,
-            semester="pavasario",
-            schedule="Thu 09:00-11:00",
-            program=prog2,
-            teacher=teacher4
-        )
-        db.session.add(mod6)
-    elif mod6.teacher != teacher4 or mod6.program != prog2:
-        mod6.teacher = teacher4
-        mod6.program = prog2
-    db.session.commit()
-
-    # New Module 5 (for teacher5)
-    mod7 = Module.query.filter_by(name="Machine Learning Fundamentals").first()
-    if not mod7:
-        mod7 = Module(
-            name="Machine Learning Fundamentals",
-            description="Introduction to ML algorithms and applications.",
-            credits=7,
-            semester="rudens",
-            schedule="Fri 14:00-16:00",
-            program=prog,
-            teacher=teacher5
-        )
-        db.session.add(mod7)
-    elif mod7.teacher != teacher5 or mod7.program != prog:
-        mod7.teacher = teacher5
-        mod7.program = prog
-    db.session.commit()
+    # Fetch updated module objects for assessments and enrollments
+    mod_algos = Module.query.filter_by(name="Algorithms and Data Structures").first()
+    mod_net = Module.query.filter_by(name="Advanced Networking").first()
+    mod_db = Module.query.filter_by(name="Databases and SQL").first()
+    mod_cloud = Module.query.filter_by(name="Cloud Computing").first()
+    mod_oop = Module.query.filter_by(name="Object-Oriented Programming").first()
+    mod_testing = Module.query.filter_by(name="Software Testing").first()
+    mod_os = Module.query.filter_by(name="Operating Systems").first()
+    mod_graphics = Module.query.filter_by(name="Computer Graphics").first()
+    mod_ml = Module.query.filter_by(name="Machine Learning Fundamentals").first()
+    mod_ai = Module.query.filter_by(name="Artificial Intelligence").first()
 
 
     # --- Assessment ---
-    # Fetch modules again to ensure they are up-to-date
-    mod = Module.query.filter_by(name="Algorithms and Data Structures").first()
-    mod2 = Module.query.filter_by(name="Databases and SQL").first()
-    mod5 = Module.query.filter_by(name="Object-Oriented Programming").first()
-    mod6 = Module.query.filter_by(name="Operating Systems").first()
-    mod7 = Module.query.filter_by(name="Machine Learning Fundamentals").first()
+    # Clear existing assessments and add new ones for the 10 modules
+    # Note: If you're deleting the DB each time, Assessment.query.delete() isn't strictly needed,
+    # but it ensures a clean state for assessments if the script is run on an existing DB.
+    # Assessment.query.delete()
+    # db.session.commit()
 
     assessments_to_add = [
-        {"module": mod, "date": datetime(2025, 6, 1, 9, 0), "description": "Midterm Exam - Algorithms", "type": "egzaminas"},
-        {"module": mod, "date": datetime(2025, 12, 15, 10, 0), "description": "Final Project - Algorithms", "type": "projektas"},
-        {"module": mod2, "date": datetime(2025, 6, 20, 10, 0), "description": "Final Exam - Databases", "type": "egzaminas"},
-        {"module": mod2, "date": datetime(2025, 10, 10, 14, 0), "description": "SQL Practical Test", "type": "kontrolinis"},
-        {"module": mod5, "date": datetime(2025, 11, 5, 11, 0), "description": "OOP Design Review", "type": "projektas"},
-        {"module": mod5, "date": datetime(2026, 1, 20, 9, 0), "description": "OOP Final Exam", "type": "egzaminas"},
-        {"module": mod6, "date": datetime(2025, 10, 25, 13, 0), "description": "OS Midterm", "type": "egzaminas"},
-        {"module": mod7, "date": datetime(2026, 1, 10, 15, 0), "description": "ML Final Project", "type": "projektas"},
+        {"module": mod_algos, "date": datetime(2025, 6, 1, 9, 0), "description": "Midterm Exam - Algorithms", "type": "egzaminas"},
+        {"module": mod_algos, "date": datetime(2025, 12, 15, 10, 0), "description": "Final Project - Algorithms", "type": "projektas"},
+        {"module": mod_net, "date": datetime(2026, 1, 10, 11, 0), "description": "Networking Midterm", "type": "egzaminas"},
+        {"module": mod_db, "date": datetime(2025, 6, 20, 10, 0), "description": "Final Exam - Databases", "type": "egzaminas"},
+        {"module": mod_db, "date": datetime(2025, 10, 10, 14, 0), "description": "SQL Practical Test", "type": "kontrolinis"},
+        {"module": mod_cloud, "date": datetime(2025, 12, 1, 13, 0), "description": "Cloud Project Submission", "type": "projektas"},
+        {"module": mod_oop, "date": datetime(2025, 11, 5, 11, 0), "description": "OOP Design Review", "type": "projektas"},
+        {"module": mod_oop, "date": datetime(2026, 1, 20, 9, 0), "description": "OOP Final Exam", "type": "egzaminas"},
+        {"module": mod_testing, "date": datetime(2026, 2, 1, 10, 0), "description": "Test Case Development", "type": "uzduotis"},
+        {"module": mod_os, "date": datetime(2025, 10, 25, 13, 0), "description": "OS Midterm", "type": "egzaminas"},
+        {"module": mod_os, "date": datetime(2026, 2, 15, 9, 0), "description": "Kernel Module Project", "type": "projektas"},
+        {"module": mod_graphics, "date": datetime(2025, 11, 20, 14, 0), "description": "Graphics Demo", "type": "projektas"},
+        {"module": mod_ml, "date": datetime(2026, 1, 10, 15, 0), "description": "ML Final Project", "type": "projektas"},
+        {"module": mod_ml, "date": datetime(2025, 12, 5, 10, 0), "description": "ML Theory Exam", "type": "egzaminas"},
+        {"module": mod_ai, "date": datetime(2026, 2, 20, 11, 0), "description": "AI Ethics Essay", "type": "uzduotis"},
     ]
 
     for a_data in assessments_to_add:
-        # Check if an assessment with the same module and description already exists
         existing_assess = Assessment.query.filter_by(
-            module=a_data["module"],
+            module_id=a_data["module"].id,
             description=a_data["description"]
         ).first()
         if not existing_assess:
@@ -348,59 +328,71 @@ def generate_mock_data():
     student_quinn = User.query.filter_by(email="quinn@mail.com").first()
 
     enrollments_to_add = [
-        # Alice in Algorithms, OOP, ML
-        {"student": student_alice, "module": mod, "attendance": 95.0, "grade": 9.5},
-        {"student": student_alice, "module": mod5, "attendance": 90.0, "grade": 8.8},
-        {"student": student_alice, "module": mod7, "attendance": 92.0, "grade": 9.1},
+        # Alice (Informatics)
+        {"student": student_alice, "module": mod_algos, "attendance": 95.0, "grade": 9.5},
+        {"student": student_alice, "module": mod_oop, "attendance": 90.0, "grade": 8.8},
+        {"student": student_alice, "module": mod_ml, "attendance": 92.0, "grade": 9.1},
+        {"student": student_alice, "module": mod_net, "attendance": 88.0, "grade": 8.5},
 
-        # Charlie in Databases, OS
-        {"student": student_charlie, "module": mod2, "attendance": 88.0, "grade": 8.7},
-        {"student": student_charlie, "module": mod6, "attendance": 85.0, "grade": 7.9},
+        # Charlie (Software Engineering)
+        {"student": student_charlie, "module": mod_db, "attendance": 88.0, "grade": 8.7},
+        {"student": student_charlie, "module": mod_os, "attendance": 85.0, "grade": 7.9},
+        {"student": student_charlie, "module": mod_cloud, "attendance": 90.0, "grade": 8.6},
+        {"student": student_charlie, "module": mod_testing, "attendance": 82.0, "grade": 7.5},
 
-        # Frank in Algorithms, Databases
-        {"student": student_frank, "module": mod, "attendance": 92.0, "grade": 8.0},
-        {"student": student_frank, "module": mod2, "attendance": 80.0, "grade": 7.2},
+        # Frank (Informatics)
+        {"student": student_frank, "module": mod_algos, "attendance": 92.0, "grade": 8.0},
+        {"student": student_frank, "module": mod_ai, "attendance": 85.0, "grade": 7.8},
+        {"student": student_frank, "module": mod_oop, "attendance": 95.0, "grade": 9.0},
 
-        # Ivy in OOP, ML
-        {"student": student_ivy, "module": mod5, "attendance": 93.0, "grade": 9.2},
-        {"student": student_ivy, "module": mod7, "attendance": 89.0, "grade": 8.5},
+        # Ivy (Informatics)
+        {"student": student_ivy, "module": mod_oop, "attendance": 93.0, "grade": 9.2},
+        {"student": student_ivy, "module": mod_ml, "attendance": 89.0, "grade": 8.5},
+        {"student": student_ivy, "module": mod_algos, "attendance": 87.0, "grade": 8.0},
 
-        # Jack in Databases, OS
-        {"student": student_jack, "module": mod2, "attendance": 91.0, "grade": 9.0},
-        {"student": student_jack, "module": mod6, "attendance": 87.0, "grade": 8.1},
+        # Jack (Software Engineering)
+        {"student": student_jack, "module": mod_db, "attendance": 91.0, "grade": 9.0},
+        {"student": student_jack, "module": mod_os, "attendance": 87.0, "grade": 8.1},
+        {"student": student_jack, "module": mod_graphics, "attendance": 89.0, "grade": 8.3},
 
-        # Karen in Algorithms, OOP
-        {"student": student_karen, "module": mod, "attendance": 88.0, "grade": 8.3},
-        {"student": student_karen, "module": mod5, "attendance": 94.0, "grade": 9.3},
+        # Karen (Informatics)
+        {"student": student_karen, "module": mod_algos, "attendance": 88.0, "grade": 8.3},
+        {"student": student_karen, "module": mod_oop, "attendance": 94.0, "grade": 9.3},
+        {"student": student_karen, "module": mod_net, "attendance": 90.0, "grade": 8.7},
 
-        # Liam in OS, Databases
-        {"student": student_liam, "module": mod6, "attendance": 90.0, "grade": 8.6},
-        {"student": student_liam, "module": mod2, "attendance": 82.0, "grade": 7.5},
+        # Liam (Software Engineering)
+        {"student": student_liam, "module": mod_os, "attendance": 90.0, "grade": 8.6},
+        {"student": student_liam, "module": mod_db, "attendance": 82.0, "grade": 7.5},
+        {"student": student_liam, "module": mod_cloud, "attendance": 88.0, "grade": 8.0},
 
-        # Mia in ML, Algorithms
-        {"student": student_mia, "module": mod7, "attendance": 96.0, "grade": 9.8},
-        {"student": student_mia, "module": mod, "attendance": 91.0, "grade": 8.9},
+        # Mia (Informatics)
+        {"student": student_mia, "module": mod_ml, "attendance": 96.0, "grade": 9.8},
+        {"student": student_mia, "module": mod_algos, "attendance": 91.0, "grade": 8.9},
+        {"student": student_mia, "module": mod_ai, "attendance": 94.0, "grade": 9.2},
 
-        # Noah in Databases, OS
-        {"student": student_noah, "module": mod2, "attendance": 85.0, "grade": 7.8},
-        {"student": student_noah, "module": mod6, "attendance": 89.0, "grade": 8.4},
+        # Noah (Software Engineering)
+        {"student": student_noah, "module": mod_db, "attendance": 85.0, "grade": 7.8},
+        {"student": student_noah, "module": mod_os, "attendance": 89.0, "grade": 8.4},
+        {"student": student_noah, "module": mod_graphics, "attendance": 82.0, "grade": 7.6},
 
-        # Olivia in OOP, ML
-        {"student": student_olivia, "module": mod5, "attendance": 90.0, "grade": 8.7},
-        {"student": student_olivia, "module": mod7, "attendance": 93.0, "grade": 9.0},
+        # Olivia (Informatics)
+        {"student": student_olivia, "module": mod_oop, "attendance": 90.0, "grade": 8.7},
+        {"student": student_olivia, "module": mod_ml, "attendance": 93.0, "grade": 9.0},
+        {"student": student_olivia, "module": mod_net, "attendance": 85.0, "grade": 7.9},
 
-        # Peter in Databases, OS
-        {"student": student_peter, "module": mod2, "attendance": 87.0, "grade": 8.2},
-        {"student": student_peter, "module": mod6, "attendance": 91.0, "grade": 8.9},
+        # Peter (Software Engineering)
+        {"student": student_peter, "module": mod_db, "attendance": 87.0, "grade": 8.2},
+        {"student": student_peter, "module": mod_os, "attendance": 91.0, "grade": 8.9},
+        {"student": student_peter, "module": mod_cloud, "attendance": 84.0, "grade": 7.7},
 
-        # Quinn in Algorithms, OOP
-        {"student": student_quinn, "module": mod, "attendance": 94.0, "grade": 9.6},
-        {"student": student_quinn, "module": mod5, "attendance": 88.0, "grade": 8.1},
+        # Quinn (Informatics)
+        {"student": student_quinn, "module": mod_algos, "attendance": 94.0, "grade": 9.6},
+        {"student": student_quinn, "module": mod_oop, "attendance": 88.0, "grade": 8.1},
+        {"student": student_quinn, "module": mod_ai, "attendance": 90.0, "grade": 8.5},
     ]
 
     for e_data in enrollments_to_add:
-        if e_data["student"] and e_data["module"]: # Ensure student and module objects exist
-            # Check if enrollment already exists before adding
+        if e_data["student"] and e_data["module"]:
             existing_enrollment = Enrollment.query.filter_by(
                 student_id=e_data["student"].id,
                 module_id=e_data["module"].id
