@@ -38,7 +38,7 @@
 
   <!-- Back to Dashboard -->
   <a
-    href="{{ dashboard_url }}"
+    href="{{ url_for('core.' + current_user.role + '_dashboard') }}"
     class="btn btn-success back-to-dashboard"
   >
     Back to Dashboard

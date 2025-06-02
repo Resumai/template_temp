@@ -3,7 +3,12 @@ from wtforms import PasswordField, SubmitField, EmailField, BooleanField, Select
 from wtforms.validators import DataRequired, Length, EqualTo, Email
 from app.models.password_validator import CustomPasswordValidator
 
-# from wtforms.fields import EmailField
+
+from flask_wtf import FlaskForm
+from wtforms import PasswordField, SubmitField, BooleanField
+from wtforms.fields import EmailField
+from wtforms.validators import DataRequired, Email, Length, EqualTo
+from app.models.password_validator import CustomPasswordValidator
 
 
 class RegistrationForm(FlaskForm):
@@ -45,13 +50,6 @@ class RegistrationForm(FlaskForm):
             "placeholder": "Enter your full name",
             "class": "form-control"
         }
-    )
-
-    role = SelectField(
-        'Role',
-        choices=[('student', 'Student'), ('teacher', 'Teacher')],
-        validators=[DataRequired()],
-        render_kw={"class": "form-select"}
     )
 
     program = SelectField(
