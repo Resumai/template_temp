@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, Blueprint
+from flask import render_template, redirect, url_for, flash, Blueprint, request
 from flask_login import login_user, login_required, logout_user, current_user
 from app import db, User, Car, LoginForm, CarForm, ContactForm, RegistrationForm, StudentGroup, StudyProgram, Module, Assessment, Enrollment
 from flask_bcrypt import check_password_hash, generate_password_hash
@@ -164,7 +164,7 @@ def student_dashboard():
         modules = [enrollment.module for enrollment in student_modules]
 
         if not modules:
-            flash("You are not enrolled in any modules.", "warning")
+            flash("You are not enrolled in any modules. You can add modules below.", "warning")
 
         return render_template(
             'student/dashboard.html', 
@@ -174,7 +174,12 @@ def student_dashboard():
     except Exception as e:
         flash(f"Error loading dashboard: {str(e)}", "danger")
         print(f"Error loading dashboard: {str(e)}") 
-        return redirect(url_for('core.student_dashboard'))  
+        return redirect(url_for('core.index'))
+
+    except Exception as e:
+        flash(f"Error loading dashboard: {str(e)}", "danger")
+        print(f"Error loading dashboard: {str(e)}") 
+        return redirect(url_for('core.index'))
 
 @bp.route('/upload-profile-picture', methods=['GET', 'POST'])
 @login_required
@@ -195,54 +200,81 @@ def delete_profile_picture():
     return redirect(url_for('core.' + current_user.role + '_dashboard'))
 
 
-@bp.route('/add_module')
+@bp.route('/add-module', methods=['GET', 'POST'])
 @roles_required('student')
 def add_module():
     """Add a module to student's program"""
     try:
+        # Fetch available modules based on the student's program
         available_modules = Module.query.filter_by(program_id=current_user.program_id).all()
+
+        if request.method == 'POST':
+            module_id = request.form.get('module_id')
+            if not module_id:
+                flash("Please select a module.", "warning")
+                return redirect(url_for('core.add_module'))  # Redirect back if no module is selected
+
+            # Check if the student is already enrolled in the module
+            existing_enrollment = Enrollment.query.filter_by(student_id=current_user.id, module_id=module_id).first()
+            if existing_enrollment:
+                flash("You are already enrolled in this module.", "info")
+            else:
+                # Enroll the student in the selected module
+                new_enrollment = Enrollment(student_id=current_user.id, module_id=module_id)
+                db.session.add(new_enrollment)
+                db.session.commit()
+                flash("Module added successfully!", "success")
+
+            return redirect(url_for('core.student_dashboard'))  # Redirect to dashboard after adding the module
+
+        # If the request is GET, render the add_module page with available modules
         return render_template('add_module.html', available_modules=available_modules)
+
     except Exception as e:
         flash(f"Error loading available modules: {str(e)}", "danger")
-        return redirect(url_for('core.student_dashboard'))  # Redirect to student dashboard
-
+        return redirect(url_for('core.student_dashboard'))  # Redirect to dashboard in case of error
+    
 
 @bp.route('/enroll_module', methods=['POST'])
-@roles_required('student')
 def enroll_module():
-    """Enroll student in a selected module"""
     try:
-        module_id = request.form.get('module_id')  # Getting the module_id from the form
-        if not module_id:
-            flash("No module selected.", "danger")
-            return redirect(url_for('core.add_module'))  # Redirect back if no module was selected
+        # Jūsų kodas čia, pavyzdžiui, užregistruoti modulį studentui
+        module_id = request.form['module_id']
+        student_id = current_user.id
 
-        module = Module.query.get_or_404(module_id)  # Look up the module by ID
-
-        # Check if module belongs to student's program
-        if module.program_id != current_user.program_id:
-            flash("You cannot enroll in modules from other programs.", "danger")
-            return redirect(url_for('core.add_module'))
-
-        # Check if already enrolled
-        existing_enrollment = Enrollment.query.filter_by(
-            student_id=current_user.id,
-            module_id=module_id
-        ).first()
-
-        if existing_enrollment:
-            flash("You are already enrolled in this module.", "warning")
-            return redirect(url_for('core.add_module'))  # Redirect back if already enrolled
-
-        # Create enrollment if all checks pass
-        enrollment = Enrollment(student_id=current_user.id, module_id=module_id)
+        # Pavyzdys, kaip sukurti užrašą (enrollment)
+        enrollment = Enrollment(student_id=student_id, module_id=module_id)
         db.session.add(enrollment)
         db.session.commit()
 
-        flash(f"Successfully enrolled in '{module.name}'!", "success")
-        return redirect(url_for('core.student_dashboard'))  # Redirect to the student's dashboard
+        flash("Module enrolled successfully!", "success")
+        return redirect(url_for('core.student_dashboard'))
 
     except Exception as e:
-        db.session.rollback()  # Rollback in case of error
         flash(f"Error enrolling in module: {str(e)}", "danger")
-        return redirect(url_for('core.add_module'))  # Redirect back in case of an error
+        return redirect(url_for('core.student_dashboard'))  # Redirect to dashboard on error
+    
+@bp.route('/delete-module/<int:module_id>', methods=['POST'])
+@roles_required('student')
+def delete_module(module_id):
+    """Delete a student's enrolled module"""
+    try:
+        # Find the student's enrollment in the module
+        enrollment = Enrollment.query.filter_by(student_id=current_user.id, module_id=module_id).first()
+
+        if not enrollment:
+            flash("You are not enrolled in this module.", "warning")
+            return redirect(url_for('core.student_dashboard'))
+
+        # Delete the enrollment
+        db.session.delete(enrollment)
+        db.session.commit()
+        flash("Module deleted successfully!", "success")
+
+        return redirect(url_for('core.student_dashboard'))  # Redirect to the dashboard after deleting the module
+
+    except Exception as e:
+        flash(f"Error deleting module: {str(e)}", "danger")
+        return redirect(url_for('core.student_dashboard'))
+    
+    

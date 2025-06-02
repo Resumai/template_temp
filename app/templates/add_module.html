@@ -1,26 +1,24 @@
 {% extends 'base.html' %} {% block title %}Add Module{% endblock %} {% block
 content %}
-<div class="mt-5">
+<div class="add-module-container">
   <h2 class="text-primary mb-4">Add a Module</h2>
 
-  {% if available_modules %}
-  <form method="POST" action="{{ url_for('core.enroll_module') }}">
-    <div class="form-group">
-      <label for="moduleSelect">Select a Module</label>
-      <select id="moduleSelect" name="module_id" class="form-control">
+  <form method="POST">
+    <div class="add-module-container">
+      <label for="module_id">Select Module:</label>
+      <select name="module_id" id="module_id" class="form-control">
         {% for module in available_modules %}
-        <option value="{{ module.id }}">
-          {{ module.name }} ({{ module.code }})
-        </option>
+        <option value="{{ module.id }}">{{ module.name }}</option>
         {% endfor %}
       </select>
     </div>
-    <button type="submit" class="btn btn-success mt-3">
-      Enroll in Selected Module
+    <button type="submit" class="btn" style="display: block; margin: 10px auto">
+      Add Module
     </button>
   </form>
-  {% else %}
-  <p class="alert alert-warning">No available modules for your program.</p>
-  {% endif %}
+
+  <a href="{{ url_for('core.student_dashboard') }}" class="btn"
+    >Back to Dashboard</a
+  >
+  {% endblock %}
 </div>
-{% endblock %}
