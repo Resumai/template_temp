@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     failed_logins = db.Column(db.Integer, default=0)
     blocked_until = db.Column(db.DateTime, nullable=True)
     profile_picture = db.Column(db.String(200))
+    block_reason = db.Column(db.String(200), nullable=True)
 
     program_id = db.Column(db.Integer, db.ForeignKey('study_program.id', ondelete='SET NULL'), nullable=True)
     group_id = db.Column(db.Integer, db.ForeignKey('student_group.id', ondelete='SET NULL'), nullable=True)
@@ -36,14 +37,24 @@ class User(UserMixin, db.Model):
         """Check if user is currently blocked."""
         return self.blocked_until and self.blocked_until > datetime.utcnow()
 
-    def block_for_minutes(self, minutes=5):
-        """Block user for a specified number of minutes."""
+    def block_for_minutes(self, minutes=5, reason="Too many failed login attempts"):
+        """Block user for a specified number of minutes with optional reason."""
         self.blocked_until = datetime.utcnow() + timedelta(minutes=minutes)
+        self.block_reason = reason
 
+    def clear_block(self):
+        """This clears the user's block and reset failed logins."""
+        self.failed_logins = 0
+        self.blocked_until = None
+        self.block_reason = None
 
-# POSSIBBLE IMPROVEMENTS: add a block reason , audit log or ip tracking
-# auto-unblock user after a certain time period
-# *show remaining time 
+    def get_remaining_block_minutes(self):
+        """Get remaining block time in mins."""
+        if self.is_temporarily_blocked():
+            return 0
+        remaining = self.blocked_until - datetime.utcnow()
+        return max(0, int(remaining.total_seconds() / 60))
+ 
 
 
 class StudentGroup(db.Model):

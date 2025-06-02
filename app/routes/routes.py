@@ -32,12 +32,14 @@ def login():
         if user:
             
             if user.is_temporarily_blocked():
-                flash(f"Your account is blocked until {user.blocked_until.strftime('%H:%M:%S')}.", "danger")
+                reason = user.block_reason or "your account is temporarily blocked"
+                flash(f"{reason} until {user.blocked_until.strftime('%H:%M:%S')}.", "danger")
                 return redirect(url_for('auth.login'))
 
             
             if check_password_hash(user.password_hash, form.password.data):
                 user.failed_logins = 0  # Reset on success
+                user.block_reason = None
                 db.session.commit()
                 login_user(user)
 
