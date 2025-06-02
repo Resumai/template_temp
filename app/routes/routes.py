@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, Blueprint
 from flask_login import login_user, login_required, logout_user, current_user
 from app import db, User, Car, LoginForm, CarForm, ContactForm, RegistrationForm, StudentGroup, StudyProgram
 from flask_bcrypt import check_password_hash, generate_password_hash
-from app import select_where
+from app.utils.curd_utils import select_where
 from app.utils.group_utils import get_or_create_group
 from app.utils.auth_utils import roles_required
 from app.utils.utils import image_upload
