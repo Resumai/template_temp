@@ -3,7 +3,6 @@ from flask_login import LoginManager
 from app import db, User, create_admin_user, generate_mock_data
 from app.routes.routes import bp, car_bp, auth_bp, info_bp, student_bp
 
-
 ### FLASK SET-UP ###
 app = Flask(
     __name__,

@@ -1,9 +1,102 @@
-{% extends 'base.html' %} {% block title %}Teacher Dashboard{% endblock %} {%
+{% extends 'base.html' %} {% block title %} Teacher Dashboard {% endblock %} {%
 block content %}
-<h2>Teacher Dashboard</h2>
-<ul>
-  <li><a href="#">Your Groups</a></li>
-  <li><a href="#">Assigned Students</a></li>
-  <li><a href="{{ url_for('car.car_list') }}">View Your Cars</a></li>
-</ul>
+<div class=" teacher-dashboard mt-4">
+  <h2 class="text-warning mb-4"><h2 class="text-primary mb-4 d-flex align-items-center">
+    {% if current_user.profile_picture %}
+    <a href="{{ url_for('core.upload_profile_picture') }}">
+      <img
+        src="{{ url_for('static', filename=current_user.profile_picture) }}"
+        alt="Profile Picture"
+        class="profile-img mx-auto d-block"
+        title="Click to change profile picture"
+      />
+    </a>
+    {% else %}
+    <a
+      href="{{ url_for('core.upload_profile_picture') }}"
+      class="add-profile-picture-link d-block text-center text-decoration-none"
+    >
+      <div class="add-profile-picture-box mx-auto">
+        <span class="plus-icon">+</span>
+      </div>
+    </a>
+
+    {% endif %} Welcome, {{ current_user.name }}
+  </h2>
+
+  <!-- Academic Information -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title text-warning">📘 Academic Information</h5>
+      <p><strong>Email:</strong> {{ current_user.email }}</p>
+      <p><strong>Program:</strong> {{ current_user.program.name }}</p>
+      <p><strong>Group:</strong> {{ current_user.group.name }}</p>
+    </div>
+  </div>
+
+  <!-- Assigned Modules -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title text-warning">📚 Assigned Modules</h5>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <strong>Module Name</strong> (Module Code)
+          <br />
+          <small>Assigned Students: 25</small>
+        </li>
+        <li class="list-group-item">
+          <strong>Another Module</strong> (Module Code)
+          <br />
+          <small>Assigned Students: 30</small>
+        </li>
+        <li class="list-group-item">
+          <strong>Third Module</strong> (Module Code)
+          <br />
+          <small>Assigned Students: 20</small>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Schedule -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title text-warning">🗓️ Schedule</h5>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Module</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-06-01</td>
+            <td>09:00 AM</td>
+            <td>Lecture</td>
+            <td>Module Name</td>
+            <td>Room 101</td>
+          </tr>
+          <tr>
+            <td>2025-06-02</td>
+            <td>10:00 AM</td>
+            <td>Lab</td>
+            <td>Another Module</td>
+            <td>Room 102</td>
+          </tr>
+          <tr>
+            <td>2025-06-03</td>
+            <td>02:00 PM</td>
+            <td>Tutorial</td>
+            <td>Third Module</td>
+            <td>Room 103</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 {% endblock %}
