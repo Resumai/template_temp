@@ -1,4 +1,4 @@
-
+from flask import flash
 from app import db, User
 from app.forms.forms import ImageUploadForm  
 from werkzeug.utils import secure_filename
@@ -18,3 +18,16 @@ def image_upload(form : ImageUploadForm, user : User):
 
     user.profile_picture = relative_path
     db.session.commit()
+
+
+def delete_photo(user: User):
+    try:
+        filepath = os.path.join('app/static', user.profile_picture)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
+        user.profile_picture = None
+        db.session.commit()
+        flash("Profile picture deleted successfully!", "success")
+    except Exception as e:
+        flash(f"Error deleting profile picture: {str(e)}", "danger")
