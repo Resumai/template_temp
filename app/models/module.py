@@ -19,7 +19,10 @@ class Module(db.Model):
     description = db.Column(db.Text)
     credits = db.Column(db.Integer, nullable=False)
     semester = db.Column(db.String(10))
-    schedule = db.Column(db.String(200))
+    # schedule = db.Column(db.String(200))
+    day_of_week = db.Column(db.String(10))  # e.g., 'Monday'
+    start_time = db.Column(db.Time)         # e.g., 10:00
+    end_time = db.Column(db.Time)           # e.g., 12:00
 
     program_id = db.Column(db.Integer, db.ForeignKey('study_program.id'))
     teacher_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'), nullable=True)

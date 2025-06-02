@@ -413,3 +413,12 @@ def view_profile():
     except Exception as e:
         flash(f"Error loading profile: {str(e)}", "danger")
         return render_template('student/profile.html', user=current_user)
+
+
+@bp.route("/schedule")
+@login_required
+def student_schedule():
+    modules = [e.module for e in current_user.enrollments]
+    # Optional: sort by weekday and time
+    modules.sort(key=lambda m: (m.day_of_week, m.start_time))
+    return render_template("student/schedule.html", modules=modules)
