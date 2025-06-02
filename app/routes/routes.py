@@ -5,6 +5,15 @@ from flask_bcrypt import check_password_hash, generate_password_hash
 from app import select_where
 from app.utils.group_utils import get_or_create_group
 from app.utils.auth_utils import roles_required
+from datetime import datetime
+from flask import render_template, redirect, url_for, flash, Blueprint, request, jsonify
+from flask_login import login_required, current_user
+from app.models.user import User
+from app.models.module import Module, Assessment
+from app.models.enrollment import Enrollment
+from app.models.study_program import StudyProgram
+from app.utils.auth_utils import roles_required
+from datetime import datetime
 
 # New imports
 from app.forms.forms import ImageUploadForm  
@@ -18,6 +27,7 @@ bp = Blueprint('core', __name__)
 auth_bp = Blueprint('auth', __name__)
 car_bp = Blueprint('car', __name__)
 info_bp = Blueprint('info', __name__)
+student_bp = Blueprint('student', __name__)
 
 
 ### Auth related routes ###
@@ -178,3 +188,216 @@ def image_import_test():
         return redirect(url_for('core.image_import_test'))
 
     return render_template('image_import_test.html', form=form, image=current_user.profile_picture)
+
+# Create student blueprint
+student_bp = Blueprint('student', __name__, url_prefix='/student')
+
+@student_bp.route('/dashboard')
+@roles_required('student')
+def dashboard():
+    """Student dashboard showing enrolled modules and upcoming assessments"""
+    try:
+        # Get student's enrolled modules
+        enrolled_modules = db.session.query(Module).join(Enrollment).filter(
+            Enrollment.student_id == current_user.id
+        ).all()
+        
+        # Get upcoming assessments for enrolled modules
+        upcoming_assessments = db.session.query(Assessment).join(Module).join(Enrollment).filter(
+            Enrollment.student_id == current_user.id,
+            Assessment.date >= datetime.now()
+        ).order_by(Assessment.date).limit(5).all()
+        
+        # Get student's grades
+        grades = db.session.query(Enrollment).filter(
+            Enrollment.student_id == current_user.id,
+            Enrollment.grade.isnot(None)
+        ).all()
+        
+        return render_template('student/dashboard.html', 
+                             enrolled_modules=enrolled_modules,
+                             upcoming_assessments=upcoming_assessments,
+                             grades=grades)
+    except Exception as e:
+        flash(f"Error loading dashboard: {str(e)}", "danger")
+        return render_template('student/dashboard.html', 
+                             enrolled_modules=[],
+                             upcoming_assessments=[],
+                             grades=[])
+
+@student_bp.route('/modules')
+@roles_required('student')
+def view_modules():
+    """View all available modules for student's program"""
+    try:
+        if not current_user.program_id:
+            flash("You are not assigned to any study program. Please contact administration.", "warning")
+            return redirect(url_for('student.dashboard'))
+        
+        # Get all modules for student's program
+        available_modules = Module.query.filter_by(program_id=current_user.program_id).all()
+        
+        # Get modules student is already enrolled in
+        enrolled_module_ids = db.session.query(Enrollment.module_id).filter_by(
+            student_id=current_user.id
+        ).all()
+        enrolled_module_ids = [id[0] for id in enrolled_module_ids]
+        
+        return render_template('student/modules.html', 
+                             available_modules=available_modules,
+                             enrolled_module_ids=enrolled_module_ids)
+    except Exception as e:
+        flash(f"Error loading modules: {str(e)}", "danger")
+        return render_template('student/modules.html', 
+                             available_modules=[],
+                             enrolled_module_ids=[])
+
+@student_bp.route('/enroll/<int:module_id>')
+@roles_required('student')
+def enroll_module(module_id):
+    """Enroll student in a module"""
+    try:
+        module = Module.query.get_or_404(module_id)
+        
+        # Check if module belongs to student's program
+        if module.program_id != current_user.program_id:
+            flash("You cannot enroll in modules from other programs.", "danger")
+            return redirect(url_for('student.view_modules'))
+        
+        # Check if already enrolled
+        existing_enrollment = Enrollment.query.filter_by(
+            student_id=current_user.id,
+            module_id=module_id
+        ).first()
+        
+        if existing_enrollment:
+            flash("You are already enrolled in this module.", "warning")
+            return redirect(url_for('student.view_modules'))
+        
+        # Check prerequisites
+        if module.prerequisites:
+            student_completed_modules = db.session.query(Enrollment.module_id).filter_by(
+                student_id=current_user.id
+            ).filter(Enrollment.grade >= 5.0).all()  # Assuming 5.0 is passing grade
+            completed_ids = [id[0] for id in student_completed_modules]
+            
+            for prereq in module.prerequisites:
+                if prereq.id not in completed_ids:
+                    flash(f"You must complete '{prereq.name}' before enrolling in this module.", "danger")
+                    return redirect(url_for('student.view_modules'))
+        
+        # Create enrollment
+        enrollment = Enrollment(
+            student_id=current_user.id,
+            module_id=module_id
+        )
+        db.session.add(enrollment)
+        db.session.commit()
+        
+        flash(f"Successfully enrolled in '{module.name}'!", "success")
+        return redirect(url_for('student.view_modules'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error enrolling in module: {str(e)}", "danger")
+        return redirect(url_for('student.view_modules'))
+
+@student_bp.route('/unenroll/<int:module_id>')
+@roles_required('student')
+def unenroll_module(module_id):
+    """Unenroll student from a module"""
+    try:
+        enrollment = Enrollment.query.filter_by(
+            student_id=current_user.id,
+            module_id=module_id
+        ).first()
+        
+        if not enrollment:
+            flash("You are not enrolled in this module.", "warning")
+            return redirect(url_for('student.view_modules'))
+        
+        # Check if module has already been graded
+        if enrollment.grade is not None:
+            flash("Cannot unenroll from a module that has already been graded.", "danger")
+            return redirect(url_for('student.view_modules'))
+        
+        module_name = enrollment.module.name
+        db.session.delete(enrollment)
+        db.session.commit()
+        
+        flash(f"Successfully unenrolled from '{module_name}'.", "success")
+        return redirect(url_for('student.view_modules'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error unenrolling from module: {str(e)}", "danger")
+        return redirect(url_for('student.view_modules'))
+
+@student_bp.route('/schedule')
+@roles_required('student')
+def view_schedule():
+    """View student's personal schedule"""
+    try:
+        # Get enrolled modules with their schedules
+        enrolled_modules = db.session.query(Module).join(Enrollment).filter(
+            Enrollment.student_id == current_user.id
+        ).all()
+        
+        # Get upcoming assessments
+        upcoming_assessments = db.session.query(Assessment).join(Module).join(Enrollment).filter(
+            Enrollment.student_id == current_user.id,
+            Assessment.date >= datetime.now()
+        ).order_by(Assessment.date).all()
+        
+        return render_template('student/schedule.html', 
+                             enrolled_modules=enrolled_modules,
+                             upcoming_assessments=upcoming_assessments)
+    except Exception as e:
+        flash(f"Error loading schedule: {str(e)}", "danger")
+        return render_template('student/schedule.html', 
+                             enrolled_modules=[],
+                             upcoming_assessments=[])
+
+@student_bp.route('/grades')
+@roles_required('student')
+def view_grades():
+    """View student's grades"""
+    try:
+        # Get all enrollments with grades
+        enrollments_with_grades = db.session.query(Enrollment).filter(
+            Enrollment.student_id == current_user.id,
+            Enrollment.grade.isnot(None)
+        ).all()
+        
+        # Calculate GPA
+        total_credits = 0
+        total_grade_points = 0
+        
+        for enrollment in enrollments_with_grades:
+            if enrollment.module and enrollment.grade:
+                credits = enrollment.module.credits
+                total_credits += credits
+                total_grade_points += (enrollment.grade * credits)
+        
+        gpa = round(total_grade_points / total_credits, 2) if total_credits > 0 else 0
+        
+        return render_template('student/grades.html', 
+                             enrollments=enrollments_with_grades,
+                             gpa=gpa,
+                             total_credits=total_credits)
+    except Exception as e:
+        flash(f"Error loading grades: {str(e)}", "danger")
+        return render_template('student/grades.html', 
+                             enrollments=[],
+                             gpa=0,
+                             total_credits=0)
+
+@student_bp.route('/profile')
+@roles_required('student')
+def view_profile():
+    """View student profile information"""
+    try:
+        return render_template('student/profile.html', user=current_user)
+    except Exception as e:
+        flash(f"Error loading profile: {str(e)}", "danger")
+        return render_template('student/profile.html', user=current_user)
