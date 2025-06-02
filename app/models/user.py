@@ -13,8 +13,6 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False) # 'student', 'teacher', 'admin'
-    failed_logins = db.Column(db.Integer, default=0)
-    blocked_until = db.Column(db.DateTime, nullable=True)
     profile_picture = db.Column(db.String(200))
     block_reason = db.Column(db.String(200), nullable=True)
 
@@ -27,6 +25,10 @@ class User(UserMixin, db.Model):
     enrollments = relationship("Enrollment", back_populates="student", cascade="all, delete")
     modules_taught = relationship("Module", back_populates="teacher")
 
+    failed_logins = db.Column(db.Integer, default=0)
+    blocked_until = db.Column(db.DateTime, nullable=True)
+    block_reason = db.Column(db.String(200), nullable=True)
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

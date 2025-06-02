@@ -32,6 +32,7 @@ app.register_blueprint(bp, url_prefix='/')
 app.register_blueprint(car_bp, url_prefix='/car')
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(info_bp, url_prefix='/info')
+app.register_blueprint(student_bp, url_prefix='/student')
 
 
 ### LOGIN LOADER ###
