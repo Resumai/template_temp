@@ -54,6 +54,13 @@ block content %}
           {% else %}
           <p>No modules assigned.</p>
           {% endif %}
+
+          <!-- Add Module Button -->
+          <a
+            href="{{ url_for('core.add_module') }}"
+            class="btn btn-primary mt-3"
+            >Add Module</a
+          >
         </div>
       </div>
     </div>

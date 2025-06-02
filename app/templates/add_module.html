@@ -1,0 +1,26 @@
+{% extends 'base.html' %} {% block title %}Add Module{% endblock %} {% block
+content %}
+<div class="mt-5">
+  <h2 class="text-primary mb-4">Add a Module</h2>
+
+  {% if available_modules %}
+  <form method="POST" action="{{ url_for('core.enroll_module') }}">
+    <div class="form-group">
+      <label for="moduleSelect">Select a Module</label>
+      <select id="moduleSelect" name="module_id" class="form-control">
+        {% for module in available_modules %}
+        <option value="{{ module.id }}">
+          {{ module.name }} ({{ module.code }})
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success mt-3">
+      Enroll in Selected Module
+    </button>
+  </form>
+  {% else %}
+  <p class="alert alert-warning">No available modules for your program.</p>
+  {% endif %}
+</div>
+{% endblock %}
