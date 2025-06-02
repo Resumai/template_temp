@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from app import db, User, create_admin_user, generate_mock_data
-from app.routes.routes import bp, car_bp, auth_bp, info_bp, student_bp
+from app.routes import bp, car_bp, auth_bp, info_bp, student_bp, teacher_bp, admin_bp
 
 ### FLASK SET-UP ###
 app = Flask(
@@ -27,6 +27,8 @@ app.register_blueprint(car_bp, url_prefix='/car')
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(info_bp, url_prefix='/info')
 app.register_blueprint(student_bp, url_prefix='/student')
+app.register_blueprint(teacher_bp, url_prefix='/teacher')
+app.register_blueprint(admin_bp, url_prefix='/admin')
 
 
 ### LOGIN LOADER ###
