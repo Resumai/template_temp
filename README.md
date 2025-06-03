@@ -6,7 +6,7 @@
 Create a complex university management system that includes:
 
 - [x] User authentication and registration for students and lecturers
-- [ ] CRUD operations for modules (courses)
+- [X] CRUD operations for modules (courses)
 - [ ] Administration panel for managing users, modules, programs, groups, and relationships
 - [ ] Database integration with migrations
 - [ ] Extra functionality: image upload, input validation, security mechanisms, error handling
@@ -20,10 +20,10 @@ Create a complex university management system that includes:
 - [x] Select study program during registration
 - [x] 🧪 Assign student group based on selected program
 - [x] Validate email and password using regex
-- [ ] Upload profile picture (file type & size validation)
+- [x] Upload profile picture (file type & size validation)
   - [x] Basic file upload functionality
   - [x] Validate file type (e.g., .png, .jpg, .jpeg)
-  - [ ] Validate file size (e.g., max 5MB)
+  - [x] Validate file size (e.g., max 5MB)
 - [x] Save image reference in DB and store image in a dedicated folder
 
 ### 2.2 Login
@@ -31,11 +31,16 @@ Create a complex university management system that includes:
 
 ### 2.3 Roles and Permissions
 - [ ] **Students**:
-  - [ ] View assigned modules
-  - [ ] View academic info (program, group)
+  - [x] View assigned modules
+  - [x] View academic info (program, group)
   - [ ] View personal schedule (lectures, exams, assignments)
+    - [x] View personal calendar of all enrolled modules
+    - [ ] View personal calendar of exams
+    - [ ] View personal calendar of assignments
+  - [x] View personal profile
 - [ ] **Lecturers**:
-  - [ ] Create/edit modules (semester, times, requirements)
+  - [x] Create/edit modules (semester, times, requirements)
+    - [ ] Need to test and polish
   - [ ] Assign and manage assessments
   - [ ] Track student progress and attendance
 - [ ] **Admins**:
@@ -47,16 +52,16 @@ Create a complex university management system that includes:
 ## 3. 📚 Module (Course) Management
 
 ### 3.1 CRUD
-- [ ] Create module with name, description, credits, semester
+- [x] Create module with name, description, credits, semester
 - [ ] Set lecture times, assessment dates, exam dates (optional)
 - [ ] Specify prerequisite modules (Bonus)
-- [ ] Update module info and schedule
+- [x] Update module info and schedule
 - [ ] View full module info, related lecturers, enrolled students
 - [ ] Delete module with confirmation
 
 ### 3.2 Student Course Selection
-- [ ] Students choose modules based on their program
-- [ ] Add selected modules to personal calendar
+- [x] Students choose modules based on their program
+- [x] Add selected modules to personal calendar
 - [ ] Check for prerequisites and schedule conflicts
 
 ### 3.3 Lecturer Assessment Management
@@ -111,7 +116,7 @@ Create a complex university management system that includes:
 ## 7. ➕ Additional Features
 
 ### 7.1 Image Uploads
-- [ ] Profile pictures in user accounts
+- [x] Profile pictures in user accounts
 - [ ] Illustrations/images in module descriptions (Bonus)
 
 ### 7.2 Complex Relationships & Academic Structure
