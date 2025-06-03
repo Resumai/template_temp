@@ -5,6 +5,14 @@ from wtforms.validators import DataRequired, Email, NumberRange, Length
 from werkzeug.utils import secure_filename
 from flask_login import current_user
 
+import io
+from PIL import Image, UnidentifiedImageError
+import os
+from flask import flash
+from app import db
+from app.models.user import User
+
+
 
 class StudentForm(FlaskForm):
     student_id = StringField('Student ID', validators=[DataRequired(), Length(min=3, max=20)])
@@ -71,31 +79,73 @@ class EnrollmentForm(FlaskForm):
         ('Withdrawn', 'Withdrawn')
     ])
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+ALLOWED_MIME_TYPES = {'image/jpeg', 'image/png'}
+MAX_FILE_SIZE = 2 * 1024 * 1024  # 2 MB
+MAX_DIMENSION = 512  # Max width/height
+
 # TODO: probably need to check for file size too i assume... profile pictures should be 10kx10k resolution or smth
 class ImageUploadForm(FlaskForm):
     image = FileField('Choose picture', validators=[
-        FileAllowed(['jpg', 'jpeg', 'png'], 'Only .jpg, .jpeg or .png files are allowed.')
+        FileAllowed(ALLOWED_EXTENSIONS, 'Only .jpg, .jpeg, or .png files are allowed.')
     ])
     submit = SubmitField('Upload Image')
 
-    # Because file endings can be changed, we check the MIME type too 
-    # wtforms runs automatically every method defined with 'def validate_...(...):'
-    # This happens when form.validate_on_submit() is called if from Flask-WTF
-    # If using WTForms, its forms.validate() is called automatically
     def validate_image(form, field):
-        if field.data:
-            allowed_mime_types = {'image/jpeg', 'image/png'}
-            if field.data.mimetype not in allowed_mime_types:
-                raise ValidationError('Invalid file type (MIME). Only JPEG and PNG images are allowed.')
+        file = field.data
+        if file:
+            if file.mimetype not in ALLOWED_MIME_TYPES:
+                raise ValidationError('Invalid file MIME type. Only JPEG and PNG are allowed.')
+            file.seek(0, os.SEEK_END)
+            if file.tell() > MAX_FILE_SIZE:
+                raise ValidationError('File too large. Maximum size is 2MB.')
+            file.seek(0)
 
-    # Returns a secure filename based on MIME type and current user ID.
     def generate_filename(self) -> str:
-        image = self.image.data
-        mime_to_ext = {
+        file = self.image.data
+        ext = {
             'image/jpeg': 'jpg',
             'image/png': 'png'
-        }
-        ext = mime_to_ext.get(image.mimetype)
+        }.get(file.mimetype)
         if not ext:
-            raise ValueError("Unsupported MIME type for filename generation.")
+            raise ValueError("Unsupported MIME type.")
         return secure_filename(f"uid_{current_user.id}_pic.{ext}")
+
+def image_upload(form: ImageUploadForm, user: User):
+    
+    file = form.image.data
+    filename = form.generate_filename()
+
+    try:
+        file_stream = io.BytesIO(file.read())
+        image = Image.open(file_stream)
+        image.verify()
+        file_stream.seek(0)
+        image = Image.open(file_stream)
+
+        if image.width > MAX_DIMENSION or image.height > MAX_DIMENSION:
+            image.thumbnail((MAX_DIMENSION, MAX_DIMENSION))
+
+        relative_path = f"uploads/{filename}"
+        full_path = os.path.join('app/static', relative_path)
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
+        image.save(full_path)
+
+        user.profile_picture = relative_path
+        db.session.commit()
+        flash("Profile picture uploaded successfully!", "success")
+
+    except UnidentifiedImageError:
+        flash("Upload failed: the file is not a valid image.", "danger")
+    except OSError as e:
+        flash("Error saving the image file.", "danger")
+        print("OSError:", e)
+    except ValueError as e:
+        flash("Image processing failed: invalid content.", "danger")
+        print("ValueError:", e)
+    except Exception as e:
+        flash("Unexpected error occurred during upload.", "danger")
+        print("Unexpected error:", e)
+
+
+
