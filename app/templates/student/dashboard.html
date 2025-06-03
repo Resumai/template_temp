@@ -54,7 +54,7 @@ block content %}
               </div>
               <form
                 method="POST"
-                action="{{ url_for('core.delete_module', module_id=module.id) }}"
+                action="{{ url_for('student.delete_module', module_id=module.id) }}"
               >
                 <button type="submit" class="btn btn-sm btn-danger ms-2">
                   Delete
@@ -67,7 +67,7 @@ block content %}
           <p>No modules enrolled yet. You can add modules below.</p>
           {% endif %}
           <a
-            href="{{ url_for('core.add_module') }}"
+            href="{{ url_for('student.add_module') }}"
             class="btn btn-primary mt-3"
             >Add Module</a
           >
