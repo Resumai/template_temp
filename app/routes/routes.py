@@ -1,13 +1,155 @@
 from flask import render_template, redirect, url_for, flash, Blueprint, request
-from flask_login import login_required, current_user
-from app import db
+from flask_login import login_user, login_required, logout_user, current_user
+from app import db, User, Car, LoginForm, CarForm, ContactForm, RegistrationForm, StudentGroup, StudyProgram, Module, Assessment, Enrollment
+from flask_bcrypt import check_password_hash, generate_password_hash
+from app.utils.curd_utils import select_where
+from app.utils.curd_utils import select_where
+from app.utils.group_utils import get_or_create_group
 from app.utils.auth_utils import roles_required
-from app.utils.utils import image_upload, delete_photo, get_dashboard_url
+from app.utils.utils import image_upload, delete_photo
+from datetime import datetime, timedelta
+
+# New imports
 from app.forms.forms import ImageUploadForm  
+from werkzeug.utils import secure_filename
+import os
+from datetime import datetime, timedelta
+from app.utils.login_utils import handle_failed_login, handle_successful_login
+
 
 
 ### Blueprint Registration ###
 bp = Blueprint('core', __name__)
+auth_bp = Blueprint('auth', __name__)
+car_bp = Blueprint('car', __name__)
+info_bp = Blueprint('info', __name__)
+student_bp = Blueprint('student', __name__)
+
+
+### Auth related routes ###
+@auth_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user: User = select_where(User.email == form.email.data).one_or_none()
+        if user:
+            if user.is_temporarily_blocked():
+                reason = user.block_reason or "your account is temporarily blocked"
+                flash(f"{reason} until {user.blocked_until.strftime('%H:%M:%S')}.", "danger")
+                return render_template('auth/login.html', form=form)
+            
+            elif user and check_password_hash(user.password_hash, form.password.data):
+                user.failed_logins = 0
+                user.block_reason = None
+                db.session.commit()
+                login_user(user)
+                handle_successful_login(user)
+            else:
+                flash("Unknown role. Please contact support.", "danger")
+                return redirect(url_for('auth.login'))     
+        else:
+            user.failed_logins += 1
+            if user.failed_logins >= 3:
+                user.blocked_until = datetime.utcnow() + timedelta(minutes=5)
+                user.failed_logins = 0  # Optionally reset
+                flash("Too many failed attempts. You are blocked for 5 minutes.", "danger")
+            else:
+                flash("Invalid credentials.", "warning")
+            db.session.commit()
+            return render_template('auth/login.html', form=form)
+
+        flash("User not found.", "danger")
+        return render_template('auth/login.html', form=form)
+    return render_template('auth/login.html', form=form)
+ 
+
+@auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    form.program.choices = [(str(p.id), p.name) for p in StudyProgram.query.all()]
+    if form.validate_on_submit():
+        selected_program = StudyProgram.query.get(int(form.program.data))
+        role = form.role.data
+        email = form.email.data
+        password = form.password.data
+
+        group = get_or_create_group(selected_program)
+        
+        user = User(
+            name=form.name.data,
+            email=email,
+            password_hash=generate_password_hash(password),
+            role=role,
+            program=selected_program,
+            group=group
+        )
+
+        db.session.add(user)
+        db.session.commit()
+        return render_template('auth/login.html', form=form)
+
+    return render_template('auth/register.html', form=form)
+
+@auth_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return render_template('auth/login.html')
+
+
+### Car related routes ###
+@car_bp.route('/cars')
+@login_required
+def car_list():
+    cars : list[Car] = Car.query.filter_by(user_id=current_user.id).all()
+    return render_template('car_stuff/car_list.html', cars=cars)
+
+@car_bp.route('/cars/add', methods=['GET', 'POST'])
+@login_required
+def add_car():
+    form = CarForm()
+    if form.validate_on_submit():
+        car = Car(
+            make=form.make.data,
+            model=form.model.data,
+            year=form.year.data,
+            color=form.color.data,
+            vin=form.vin.data,
+            user_id=current_user.id
+        )
+        db.session.add(car)
+        db.session.commit()
+        return redirect(url_for('car.car_list'))
+    return render_template('car_stuff/add_car.html', form=form)
+
+@car_bp.route('/cars/delete/<int:car_id>', methods=['POST'])
+@login_required
+def delete_car(car_id):
+    car = Car.query.get_or_404(car_id)
+    if car.user_id != current_user.id:
+        return "Unauthorized", 403
+    db.session.delete(car)
+    db.session.commit()
+    return redirect(url_for('car.car_list'))
+
+
+### Info routes ###
+@info_bp.route('/privacy')
+def privacy():
+    return render_template('info/privacy.html')
+
+@info_bp.route('/terms')
+def terms():
+    return render_template('info/terms.html')
+
+@info_bp.route('/contact', methods=['GET', 'POST'])
+def contact_us():
+    form = ContactForm()
+    if form.validate_on_submit():
+    # Normally, you'd send an email or save the message to a database
+        flash("Thank you for your message. We'll get back to you soon.", "success")
+        return redirect(url_for('core.contact_us'))
+    return render_template('info/contact_us.html', form=form)
 
 
 ### Core/Unsorted routes ###
@@ -15,24 +157,57 @@ bp = Blueprint('core', __name__)
 def index():
     return render_template('index.html')
 
-
 @bp.route('/user-menu')
 @login_required
 def user_menu():
     return render_template('user_menu.html')
 
+@bp.route('/admin-dashboard')
+@roles_required('admin')
+def admin_dashboard():
+    return render_template('admin/dashboard.html')
+
+@bp.route('/teacher-dashboard')
+@roles_required('teacher')
+def teacher_dashboard():
+    return render_template('teacher/dashboard.html')
+
+@bp.route('/student-dashboard')
+@roles_required('student')
+def student_dashboard():
+    """Display student's dashboard with modules"""
+    try:
+        # Get the modules the student is enrolled in
+        student_modules = Enrollment.query.filter_by(student_id=current_user.id).all()
+        modules = [enrollment.module for enrollment in student_modules]
+
+        if not modules:
+            flash("You are not enrolled in any modules. You can add modules below.", "warning")
+
+        return render_template(
+            'student/dashboard.html', 
+            modules=modules
+        )
+
+    except Exception as e:
+        flash(f"Error loading dashboard: {str(e)}", "danger")
+        print(f"Error loading dashboard: {str(e)}") 
+        return redirect(url_for('core.index'))
+
+    except Exception as e:
+        flash(f"Error loading dashboard: {str(e)}", "danger")
+        print(f"Error loading dashboard: {str(e)}") 
+        return redirect(url_for('core.index'))
 
 @bp.route('/upload-profile-picture', methods=['GET', 'POST'])
 @login_required
 def upload_profile_picture():
     form = ImageUploadForm()
-    current_dashboard_url = get_dashboard_url(current_user)
     if form.validate_on_submit():
         image_upload(form, current_user)
+        return redirect(url_for('core.upload_profile_picture'))
 
-        return redirect(current_dashboard_url)
-
-    return render_template('/upload_profile_picture.html', form=form, image=current_user.profile_picture, dashboard_url=current_dashboard_url)
+    return render_template('/upload_profile_picture.html', form=form, image=current_user.profile_picture)
 
 
 @bp.route('/delete-profile-picture', methods=['POST'])
@@ -40,8 +215,93 @@ def upload_profile_picture():
 def delete_profile_picture():
     if current_user.profile_picture:
         delete_photo(current_user)
-
-    current_dashboard_url = get_dashboard_url(current_user)
-    return redirect(current_dashboard_url)
+    return redirect(url_for('core.' + current_user.role + '_dashboard'))
 
 
+@bp.route('/add-module', methods=['GET', 'POST'])
+@roles_required('student')
+def add_module():
+    """Add a module to student's program"""
+    try:
+        # Fetch available modules based on the student's program
+        available_modules = Module.query.filter_by(program_id=current_user.program_id).all()
+
+        if request.method == 'POST':
+            module_id = request.form.get('module_id')
+            if not module_id:
+                flash("Please select a module.", "warning")
+                return redirect(url_for('core.add_module'))  # Redirect back if no module is selected
+
+            # Check if the student is already enrolled in the module
+            existing_enrollment = Enrollment.query.filter_by(student_id=current_user.id, module_id=module_id).first()
+            if existing_enrollment:
+                flash("You are already enrolled in this module.", "info")
+            else:
+                # Enroll the student in the selected module
+                new_enrollment = Enrollment(student_id=current_user.id, module_id=module_id)
+                db.session.add(new_enrollment)
+                db.session.commit()
+                flash("Module added successfully!", "success")
+
+            return redirect(url_for('core.student_dashboard'))  # Redirect to dashboard after adding the module
+
+        # If the request is GET, render the add_module page with available modules
+        return render_template('add_module.html', available_modules=available_modules)
+
+    except Exception as e:
+        flash(f"Error loading available modules: {str(e)}", "danger")
+        return redirect(url_for('core.student_dashboard'))  # Redirect to dashboard in case of error
+    
+
+@bp.route('/enroll_module', methods=['POST'])
+def enroll_module():
+    try:
+        # Jūsų kodas čia, pavyzdžiui, užregistruoti modulį studentui
+        module_id = request.form['module_id']
+        student_id = current_user.id
+
+        # Pavyzdys, kaip sukurti užrašą (enrollment)
+        enrollment = Enrollment(student_id=student_id, module_id=module_id)
+        db.session.add(enrollment)
+        db.session.commit()
+
+        flash("Module enrolled successfully!", "success")
+        return redirect(url_for('core.student_dashboard'))
+
+    except Exception as e:
+        flash(f"Error enrolling in module: {str(e)}", "danger")
+        return redirect(url_for('core.student_dashboard'))  # Redirect to dashboard on error
+
+
+@bp.route('/delete-module/<int:module_id>', methods=['POST'])
+@roles_required('student')
+def delete_module(module_id):
+    """ Delete student's enrolled module """
+    try:
+        # Find the student's enrollment in the module
+        enrollment = Enrollment.query.filter_by(student_id=current_user.id, module_id=module_id).first()
+
+        if not enrollment:
+            flash("You are not enrolled in this module.", "warning")
+            return redirect(url_for('core.student_dashboard'))
+
+        # Delete the enrollment
+        db.session.delete(enrollment)
+        db.session.commit()
+        flash("Module deleted successfully!", "success")
+
+        return redirect(url_for('core.student_dashboard'))  # Redirect to the dashboard after deleting the module
+
+    except Exception as e:
+        flash(f"Error deleting module: {str(e)}", "danger")
+        return redirect(url_for('core.student_dashboard'))
+
+
+@bp.route("/schedule")
+@login_required
+def student_schedule():
+    """ Display student's schedule """
+    modules = [e.module for e in current_user.enrollments]
+    # Optional: sort by weekday and time
+    modules.sort(key=lambda m: (m.day_of_week, m.start_time))
+    return render_template("student/schedule.html", modules=modules)

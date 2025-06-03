@@ -36,7 +36,6 @@ block content %}
         </div>
       </div>
     </div>
-
     <!-- Modules -->
     <div class="col-lg-4">
       <div class="card h-100 shadow-sm">
@@ -54,7 +53,7 @@ block content %}
               </div>
               <form
                 method="POST"
-                action="{{ url_for('student.delete_module', module_id=module.id) }}"
+                action="{{ url_for('core.delete_module', module_id=module.id) }}"
               >
                 <button type="submit" class="btn btn-sm btn-danger ms-2">
                   Delete
@@ -67,48 +66,45 @@ block content %}
           <p>No modules enrolled yet. You can add modules below.</p>
           {% endif %}
           <a
-            href="{{ url_for('student.add_module') }}"
+            href="{{ url_for('core.add_module') }}"
             class="btn btn-primary mt-3"
             >Add Module</a
           >
         </div>
       </div>
     </div>
-
     <!-- Schedule -->
     <div class="col-lg-4">
       <div class="card h-100 shadow-sm">
         <div class="card-body">
           <h5 class="card-title text-success">🗓️ Schedule</h5>
-
           {% if schedule %}
           <div class="table-responsive">
             <table class="table table-sm table-striped">
               <thead>
                 <tr>
-                  <th>Day</th>
-                  <th>Module</th>
+                  <th>Date</th>
                   <th>Time</th>
-                  <th>Teacher</th>
+                  <th>Type</th>
+                  <th>Module</th>
+                  <th>Location</th>
                 </tr>
               </thead>
               <tbody>
-                {% for mod in schedule %}
+                {% for item in schedule %}
                 <tr>
-                  <td>{{ mod.day_of_week }}</td>
-                  <td>{{ mod.module.name }}</td>
-                  <td>
-                    {{ mod.start_time.strftime('%H:%M') }} - {{
-                    mod.end_time.strftime('%H:%M') }}
-                  </td>
-                  <td>{{ mod.teacher.name if mod.teacher else "TBA" }}</td>
+                  <td>{{ item.date.strftime('%Y-%m-%d') }}</td>
+                  <td>{{ item.time }}</td>
+                  <td>{{ item.type }}</td>
+                  <td>{{ item.module.name }}</td>
+                  <td>{{ item.location }}</td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
           {% else %}
-          <p>No schedule available.</p>
+          <p>The schedule is not yet available.</p>
           {% endif %}
         </div>
       </div>
