@@ -1,9 +1,10 @@
-from flask import render_template, redirect, url_for, flash, Blueprint, request
+from flask import render_template, redirect, url_for, flash, Blueprint, request, current_app
 from flask_login import login_required, current_user
 from app import db
 from app.utils.auth_utils import roles_required
-from app.utils.utils import image_upload, delete_photo, get_dashboard_url
-from app.forms.forms import ImageUploadForm  
+from app.utils.utils import delete_photo, get_dashboard_url
+from app.forms.forms import ImageUploadForm
+import os
 
 
 ### Blueprint Registration ###
@@ -27,12 +28,36 @@ def user_menu():
 def upload_profile_picture():
     form = ImageUploadForm()
     current_dashboard_url = get_dashboard_url(current_user)
+
     if form.validate_on_submit():
-        image_upload(form, current_user)
+        # Generate a safe filename based on user ID and MIME
+        filename = form.generate_filename()
+
+        
+        # Get processed (cropped & resized) image from the form
+        image_data = form._processed_image
+
+        # Define where to save the image
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        os.makedirs(upload_folder, exist_ok=True)
+        image_path = os.path.join(upload_folder, filename)
+
+        # Save the file
+        with open(image_path, 'wb') as f:
+            f.write(image_data.read())
+
+        # Optional: Update user's profile picture field
+        current_user.profile_picture = filename
+        db.session.commit()
 
         return redirect(current_dashboard_url)
 
-    return render_template('/upload_profile_picture.html', form=form, image=current_user.profile_picture, dashboard_url=current_dashboard_url)
+    return render_template(
+        'upload_profile_picture.html',
+        form=form,
+        image=current_user.profile_picture,
+        dashboard_url=current_dashboard_url
+    )
 
 
 @bp.route('/delete-profile-picture', methods=['POST'])
