@@ -648,3 +648,16 @@ ul.list-group li small {
   display: flex;
   flex-direction: column;
 }
+
+.AssignModulesPage {
+  margin-top: 20px; /* Space from the top of the page */
+  padding: 2rem; /* Padding around the content */
+  max-width: 500px; /* Maximum width of the container */
+  margin: 0 auto; /* Centers the container horizontally */
+  box-shadow: 100 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  gap: 20px; /* Adds space between child elements */
+}
+
+.schedule-card {
+  margin-top: 22px; /* Adjust the value to move it down */
+}

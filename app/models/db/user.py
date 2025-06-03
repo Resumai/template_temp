@@ -55,4 +55,5 @@ class User(UserMixin, db.Model):
             return 0
         remaining = self.blocked_until - datetime.utcnow()
         return max(0, int(remaining.total_seconds() / 60))
+    
  

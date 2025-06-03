@@ -1,0 +1,166 @@
+{% extends 'base.html' %} {% block title %} Assign or Add Modules {% endblock %}
+{% block content %}
+<div class="AssignModulesPage container mt-4">
+  <!-- Assign Module Card -->
+  <div class="card shadow mb-5 border-primary">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">
+        <i class="bi bi-person-plus me-2"></i>Assign Module to Student
+      </h5>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('teacher.assign_modules') }}">
+        <div class="mb-3">
+          <label for="student_id" class="form-label">Select Student</label>
+          <select
+            class="form-select"
+            id="student_id"
+            name="student_id"
+            required
+          >
+            {% for student in students %}
+            <option value="{{ student.id }}">
+              {{ student.name }} ({{ student.email }}) - {{ student.program.name
+              }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label for="module_id" class="form-label">Select Module</label>
+          <select class="form-select" id="module_id" name="module_id" required>
+            {% for module in teacher_modules %}
+            <option value="{{ module.id }}">
+              {{ module.name }} ({{ module.semester }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          name="assign_module"
+          class="btn btn-primary w-100"
+        >
+          <i class="bi bi-check2-circle me-2"></i>Assign Module
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Module Card -->
+  <div class="card shadow-lg mt-5">
+    <div class="card-header bg-success text-white">
+      <h4 class="mb-0">Add New Module</h4>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('teacher.assign_modules') }}">
+        <div class="row g-3">
+          <!-- Module Name and Credits -->
+          <div class="col-md-6">
+            <label for="name" class="form-label">Module Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label for="credits" class="form-label">Credits</label>
+            <input
+              type="number"
+              class="form-control"
+              id="credits"
+              name="credits"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="mb-3 mt-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            class="form-control"
+            id="description"
+            name="description"
+            rows="3"
+            required
+          ></textarea>
+        </div>
+
+        <!-- Semester and Program Code -->
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="semester" class="form-label">Semester</label>
+            <select class="form-select" id="semester" name="semester" required>
+              <option value="Spring">Spring</option>
+              <option value="Autumn">Autumn</option>
+              <option value="Winter">Winter</option>
+            </select>
+          </div>
+
+          <label for="program_code" class="form-label">Program Code</label>
+          <select
+            class="form-select"
+            id="program_code"
+            name="program_code"
+            required
+          >
+            <option value="{{ current_user.program_id }}">
+              {{ current_user.program.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Day of Week and Time Range -->
+        <div class="row g-3 mt-3">
+          <div class="col-md-6">
+            <label for="day_of_week" class="form-label">Day of Week</label>
+            <select
+              class="form-select"
+              id="day_of_week"
+              name="day_of_week"
+              required
+            >
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="time_range" class="form-label">Select Time Range</label>
+            <select
+              class="form-select"
+              id="time_range"
+              name="time_range"
+              required
+            >
+              {% for start in range(8, 20, 2) %}
+              <option value="{{ start }}-{{ start + 2 }}">
+                {{ "%02d" % start }}:00 – {{ "%02d" % (start + 2) }}:00
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          name="add_module"
+          class="btn btn-success w-100 mt-4"
+        >
+          Add New Module
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
