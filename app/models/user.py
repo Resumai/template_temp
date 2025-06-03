@@ -3,7 +3,7 @@ from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 from flask_bcrypt import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
-
+from app.models.module import student_modules
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
@@ -55,6 +55,12 @@ class User(UserMixin, db.Model):
             return 0
         remaining = self.blocked_until - datetime.utcnow()
         return max(0, int(remaining.total_seconds() / 60))
+    
+    modules = db.relationship(
+    'Module',
+    secondary=student_modules,
+    back_populates='students'
+)
  
 
 
