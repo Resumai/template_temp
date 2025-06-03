@@ -2,11 +2,7 @@
 from app import db
 from sqlalchemy.orm import relationship
 
-student_modules = db.Table(
-    'student_modules',
-    db.Column('student_id', db.Integer, db.ForeignKey('user.id', ondelete="CASCADE")),
-    db.Column('module_id', db.Integer, db.ForeignKey('module.id', ondelete="CASCADE"))
-)
+
 
 prerequisites = db.Table(
     'prerequisites',
@@ -36,14 +32,7 @@ class Module(db.Model):
     assessments = relationship("Assessment", back_populates="module", cascade="all, delete")
     enrollments = relationship("Enrollment", back_populates="module", cascade="all, delete")
     
-    # NEW: many-to-many with students
-    students = db.relationship(
-        "User",
-        secondary=student_modules,
-        back_populates="modules",
-        lazy="dynamic"
-    )
-
+    
     prerequisites = relationship(
         "Module",
         secondary=prerequisites,
