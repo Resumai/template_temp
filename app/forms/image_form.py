@@ -13,16 +13,26 @@ class ImageUploadForm(FlaskForm):
     ])
     submit = SubmitField('Upload Image')
 
+    MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
     # Because file endings can be changed, we check the MIME type too 
     # wtforms runs automatically every method defined with 'def validate_...(...):'
     # This happens when form.validate_on_submit() is called if from Flask-WTF
     # If using WTForms, its forms.validate() is called automatically
     def validate_image(form, field):
         if field.data:
+            # MIME type check
             allowed_mime_types = {'image/jpeg', 'image/png'}
             if field.data.mimetype not in allowed_mime_types:
                 raise ValidationError('Invalid file type (MIME). Only JPEG and PNG images are allowed.')
                 
+            # File size check
+            field.data.stream.seek(0, 2)  # Move to end of file
+            file_size = field.data.stream.tell()
+            field.data.stream.seek(0)  # Reset to beginning for later use
+
+            if file_size > form.MAX_FILE_SIZE:
+                raise ValidationError('File is too large. Maximum size is 5MB.')
 
     # Returns a secure filename based on MIME type and current user ID.
     def generate_filename(self) -> str:
