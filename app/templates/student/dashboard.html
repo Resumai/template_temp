@@ -38,39 +38,62 @@ block content %}
     </div>
 
     <!-- Modules -->
-    <div class="col-lg-4">
-      <div class="card h-100 shadow-sm">
+    <div class="col-lg-8">
+      <div class="card h-100 shadow rounded-4 border-0">
         <div class="card-body">
-          <h5 class="card-title text-success">📚 Modules</h5>
+          <h5 class="card-title text-success fw-bold mb-4">📚 Your Modules</h5>
+
           {% if modules %}
-          <ul class="list-group">
-            {% for module in modules %}
-            <li
-              class="list-group-item d-flex justify-content-between align-items-center"
-            >
-              <div>
-                <strong>{{ module.name }}</strong> ({{ module.code }})<br />
-                <small>Teacher: {{ module.teacher.name }}</small>
-              </div>
-              <form
-                method="POST"
-                action="{{ url_for('student.delete_module', module_id=module.id) }}"
-              >
-                <button type="submit" class="btn btn-sm btn-danger ms-2">
-                  Delete
-                </button>
-              </form>
-            </li>
-            {% endfor %}
-          </ul>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Module Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Semester</th>
+                  <th scope="col">Teacher</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for module in modules %}
+                <tr>
+                  <td class="fw-semibold text-primary">{{ module.name }}</td>
+                  <td>{{ module.description }}</td>
+                  <td>{{ module.semester }}</td>
+                  <td>{{ module.teacher.name }}</td>
+                  <td class="text-end">
+                    <form
+                      method="POST"
+                      action="{{ url_for('student.delete_module', module_id=module.id) }}"
+                      class="d-inline"
+                    >
+                      <button
+                        type="submit"
+                        class="btn btn-sm btn-outline-danger"
+                        title="Delete Module"
+                      >
+                        ✖
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
           {% else %}
-          <p>No modules enrolled yet. You can add modules below.</p>
+          <p class="text-muted">You haven't enrolled in any modules yet.</p>
           {% endif %}
-          <a
-            href="{{ url_for('student.add_module') }}"
-            class="btn btn-primary mt-3"
-            >Add Module</a
-          >
+
+          <div class="d-grid mt-4">
+            <a
+              href="{{ url_for('student.add_module') }}"
+              class="btn btn-success fw-semibold shadow-sm"
+            >
+              ➕ Add Module
+            </a>
+          </div>
         </div>
       </div>
     </div>
