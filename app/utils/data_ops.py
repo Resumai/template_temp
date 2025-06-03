@@ -76,3 +76,48 @@ def add_new_module(name, description, credits, semester, day_of_week,
 #         program_code="INFO2025",
 #         teacher_email="teacher@mail.com"
 #     )
+
+
+# Example usage: add_study_program("New Study Program", "NEW2025", 1)
+def add_study_program(name, study_code, faculty_id):
+    try:
+        # 1. Create a new StudyProgram instance
+        new_program = StudyProgram(
+            name=name,
+            code=study_code,
+            faculty_id=faculty_id # ID of Faculty or Faculty object
+        )
+
+        # 2. Add to the session and commit
+        db.session.add(new_program)
+        db.session.commit()
+        print(f"Study Program '{name}' added successfully!")
+        return new_program
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred: {e}")
+        return None
+
+
+
+
+# Example usage: update_study_program(1, new_name="New Study Program Name")
+def update_study_program(program_id, new_name=None, new_code=None, new_faculty_id=None):
+    program = StudyProgram.query.get(program_id)
+
+    if program:
+        if new_name is not None:
+            program.name = new_name
+        if new_code is not None:
+            program.code = new_code
+        if new_faculty_id is not None:
+            program.faculty_id = new_faculty_id
+
+        db.session.commit()
+        print(f"Study Program ID {program_id} updated.")
+        return program
+    else:
+        print(f"Study Program ID {program_id} not found.")
+        return None
+
