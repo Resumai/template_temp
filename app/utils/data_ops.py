@@ -1,4 +1,5 @@
-from app import db, User, Module, StudyProgram
+from app import db
+from app.models import User, Module, StudyProgram
 from flask_bcrypt import generate_password_hash
 from datetime import time
 

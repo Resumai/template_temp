@@ -1,6 +1,7 @@
 from flask import render_template, redirect, url_for, flash, Blueprint
 from flask_login import login_user, login_required, logout_user
 from app import db, User, LoginForm, RegistrationForm, StudyProgram
+# from app.models import User, StudyProgram
 from flask_bcrypt import check_password_hash, generate_password_hash
 from app.utils.curd_utils import select_where
 from app.utils.group_utils import get_or_create_group

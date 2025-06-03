@@ -1,5 +1,6 @@
 from flask import flash, url_for
-from app import db, User
+from app import db
+from app.models import User
 from app.forms.forms import ImageUploadForm  
 from werkzeug.utils import secure_filename
 import os

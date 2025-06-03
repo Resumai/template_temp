@@ -17,11 +17,3 @@ class StudyProgram(db.Model):
     groups = relationship("StudentGroup", back_populates="program")
     modules = relationship("Module", back_populates="program", cascade="all, delete")
 
-
-class Faculty(db.Model):
-    __tablename__ = 'faculty'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-
-    programs = relationship("StudyProgram", back_populates="faculty")
