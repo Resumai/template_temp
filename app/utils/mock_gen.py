@@ -1,7 +1,7 @@
-from app.models.user import User, StudentGroup
-from app.models.study_program import StudyProgram, Faculty
-from app.models.module import Module, Assessment
-from app.models.enrollment import Enrollment
+from app.models import User, StudentGroup
+from app.models import StudyProgram, Faculty
+from app.models import Module, Assessment
+from app.models import Enrollment
 from flask_bcrypt import generate_password_hash
 from datetime import datetime, time # Import time for new schedule fields
 from app import db

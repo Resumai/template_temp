@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.utils.auth_utils import roles_required
 from app.utils.utils import image_upload, delete_photo, get_dashboard_url
-from app.forms.forms import ImageUploadForm  
+from app.forms import ImageUploadForm  
 
 
 ### Blueprint Registration ###

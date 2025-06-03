@@ -1,4 +1,5 @@
-from app import db, User, Enrollment
+from app import db
+from app.models import User, Enrollment
 from sqlalchemy.sql.elements import BinaryExpression
 from sqlalchemy import select, delete, update
 from sqlalchemy.orm import joinedload

@@ -1,5 +1,5 @@
 from app import db
-from app.models.user import StudentGroup
+from app.models import StudentGroup
 
 def get_or_create_group(program):
     group = StudentGroup.query.filter_by(program=program).first()
