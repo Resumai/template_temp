@@ -78,6 +78,17 @@ def add_new_module(name, description, credits, semester, day_of_week,
 #     )
 
 
+# Example usage: delete_module(1)
+def delete_module(module_id):
+    module = Module.query.get(module_id)
+    if module:
+        db.session.delete(module)
+        db.session.commit()
+        print(f"Module ID {module_id} deleted successfully.")
+    else:
+        print(f"Module ID {module_id} not found.")
+
+
 # Example usage: add_study_program("New Study Program", "NEW2025", 1)
 def add_study_program(name, study_code, faculty_id):
     try:
@@ -98,8 +109,6 @@ def add_study_program(name, study_code, faculty_id):
         db.session.rollback()
         print(f"An error occurred: {e}")
         return None
-
-
 
 
 # Example usage: update_study_program(1, new_name="New Study Program Name")
