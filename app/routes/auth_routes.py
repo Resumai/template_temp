@@ -31,10 +31,10 @@ def login():
 
             if user.role == 'admin':
                 flash("Welcome back, Admin!", "success")
-                return redirect(url_for('core.admin_dashboard'))
+                return redirect(url_for('admin.admin_dashboard'))
             elif user.role == 'teacher':
                 flash("Welcome back, Teacher!", "success")
-                return redirect(url_for('core.teacher_dashboard'))
+                return redirect(url_for('teacher.teacher_dashboard'))
             elif user.role == 'student':
                 flash("Welcome back, Student!", "success")
                 return redirect(url_for('student.student_dashboard'))
