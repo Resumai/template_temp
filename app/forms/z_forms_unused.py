@@ -1,3 +1,7 @@
+#### UNUSED FORMS ####
+# This is not used, and just left here as memo or reference
+
+
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, IntegerField, FloatField, SelectField, TextAreaField, DateField, SubmitField, ValidationError

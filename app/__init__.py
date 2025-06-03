@@ -28,7 +28,6 @@ from app.forms import ImageUploadForm
 from app.forms import CarForm
 
 # Utils
-from app.utils.curd_utils import select_where
 from app.utils.data_ops import create_admin_user
 from app.utils.mock_gen import generate_mock_data
 

@@ -3,6 +3,8 @@ from app.models import User, Module, StudyProgram
 from flask_bcrypt import generate_password_hash
 from datetime import time
 
+# For hardcoding admin user
+# Usage example: create_admin_user()
 def create_admin_user():
     if not User.query.filter_by(email='admin@mail.com').first():
         admin = User(
@@ -17,7 +19,36 @@ def create_admin_user():
         db.session.commit()
 
 
+# Usage example: create_new_admin_user("New Admin", "new_admin@mail.com", "password")
+def create_new_admin_user(admin_name, admin_email, admin_password):
+    if not User.query.filter_by(email=admin_email).first():
+        admin = User(
+            name=admin_name,
+            email=admin_email,
+            password_hash=generate_password_hash(admin_password),
+            role='admin',
+            program_id=None,
+            group_id=None
+        )
+        print(f"Admin user '{admin_name}' created successfully!")
+        db.session.add(admin)
+        db.session.commit()
+    else:
+        print(f"Admin user with email '{admin_email}' already exists.")
 
+# TODO: TEST
+# Usage example: delete_user(1)
+def delete_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        print(f"User ID {user_id} deleted successfully.")
+    else:
+        print(f"User ID {user_id} not found.")
+
+
+# Usage example: add_new_module("New Module", "New Module Description", 5, "autumn", "Monday", 9, 30, 11, 0, "INFO2025", "teacher@mail.com")
 def add_new_module(name, description, credits, semester, day_of_week,
                    start_hour, start_minute, end_hour, end_minute,
                    program_code, teacher_email):
@@ -61,7 +92,7 @@ def add_new_module(name, description, credits, semester, day_of_week,
         print(f"An error occurred: {e}")
         return None
 
-# Example usage:
+# Another example of usage:
 # if not Module.query.filter_by(name='New Advanced Python').first():
 #     add_new_module(
 #         name="New Advanced Python",
@@ -78,7 +109,20 @@ def add_new_module(name, description, credits, semester, day_of_week,
 #     )
 
 
-# Example usage: delete_module(1)
+# Usage example: update_module(1, new_name="Updated Module Name")
+def update_module(module_id, **kwargs: Module):
+    module : Module = Module.query.get(module_id)
+    if not module:
+        print(f"Module ID {module_id} not found.")
+        return
+
+    for key, value in kwargs.items():
+        setattr(module, key, value)
+    db.session.commit()
+    print(f"Module ID {module_id} updated successfully.")
+
+
+# Usage example: delete_module(1)
 def delete_module(module_id):
     module = Module.query.get(module_id)
     if module:
@@ -89,7 +133,7 @@ def delete_module(module_id):
         print(f"Module ID {module_id} not found.")
 
 
-# Example usage: add_study_program("New Study Program", "NEW2025", 1)
+# Usage example: add_study_program("New Study Program", "NEW2025", 1)
 def add_study_program(name, study_code, faculty_id):
     try:
         # 1. Create a new StudyProgram instance
@@ -111,7 +155,7 @@ def add_study_program(name, study_code, faculty_id):
         return None
 
 
-# Example usage: update_study_program(1, new_name="New Study Program Name")
+# Usage example: update_study_program(1, new_name="New Study Program Name")
 def update_study_program(program_id, new_name=None, new_code=None, new_faculty_id=None):
     program = StudyProgram.query.get(program_id)
 

@@ -4,7 +4,6 @@ from app import db
 from app.models import User, StudyProgram
 from app.forms import LoginForm, RegistrationForm
 from flask_bcrypt import check_password_hash, generate_password_hash
-from app.utils.curd_utils import select_where
 from app.utils.group_utils import get_or_create_group
 from datetime import datetime, timedelta
 
@@ -18,7 +17,7 @@ auth_bp = Blueprint('auth', __name__)
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user : User = select_where(User.email == form.email.data).one_or_none()
+        user : User = User.query.filter_by(email=form.email.data).first()
         if user.is_temporarily_blocked():
             reason = user.block_reason or "your account is temporarily blocked"
             flash(f"{reason} until {user.blocked_until.strftime('%H:%M:%S')}.", "danger")
