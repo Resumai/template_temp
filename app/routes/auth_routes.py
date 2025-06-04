@@ -18,6 +18,11 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user : User = User.query.filter_by(email=form.email.data).first()
+
+        if user is None:
+            flash("User not found.", "danger")
+            return render_template('auth/login.html', form=form)
+
         if user.is_temporarily_blocked():
             reason = user.block_reason or "your account is temporarily blocked"
             flash(f"{reason} until {user.blocked_until.strftime('%H:%M:%S')}.", "danger")
